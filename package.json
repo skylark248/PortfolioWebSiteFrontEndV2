@@ -2,8 +2,9 @@
   "name": "portfolio-website-v2",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@9.15.0",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -12,6 +13,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.3.3"
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "~5.17.0",
+    "astro-seo": "^1.1.0",
+    "tailwindcss": "^4.3.0"
   }
 }
