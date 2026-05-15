@@ -10,7 +10,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check .",
+    "lint:fix": "eslint . --fix && stylelint \"src/**/*.css\" --fix && prettier --write .",
+    "typecheck": "astro check",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:lhci": "lhci autorun"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
@@ -20,5 +26,23 @@
     "astro": "~5.17.0",
     "astro-seo": "^1.1.0",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
+    "@vitest/coverage-v8": "^4.1.6",
+    "eslint": "^10.4.0",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "sharp": "^0.34.5",
+    "stylelint": "^17.11.1",
+    "vitest": "^4.1.6"
   }
 }

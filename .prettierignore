@@ -1,0 +1,7 @@
+dist/
+node_modules/
+pnpm-lock.yaml
+.astro/
+playwright-report/
+test-results/
+.lighthouseci/
