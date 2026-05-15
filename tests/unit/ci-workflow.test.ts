@@ -3,10 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // Resolve the workflow file path relative to the project root
-const workflowPath = path.resolve(
-  __dirname,
-  "../../.github/workflows/ci.yml",
-);
+const workflowPath = path.resolve(__dirname, "../../.github/workflows/ci.yml");
 
 describe("CI workflow shape", () => {
   let content: string;
@@ -68,9 +65,7 @@ describe("CI workflow shape", () => {
   });
 
   it("e2e job installs playwright chromium", () => {
-    expect(content).toContain(
-      "pnpm exec playwright install --with-deps chromium",
-    );
+    expect(content).toContain("pnpm exec playwright install --with-deps chromium");
   });
 
   it("e2e job runs pnpm test:e2e", () => {
