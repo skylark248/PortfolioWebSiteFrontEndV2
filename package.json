@@ -45,6 +45,7 @@
     "prettier-plugin-astro": "^0.14.1",
     "sharp": "^0.34.5",
     "stylelint": "^17.11.1",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "zod": "^4.4.3"
   }
 }
