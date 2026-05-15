@@ -12,16 +12,12 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Analytics component (production build)", () => {
-  test("page contains exactly one gtag.js script tag with G-TFBV6QLYQB", async ({
-    page,
-  }) => {
+  test("page contains exactly one gtag.js script tag with G-TFBV6QLYQB", async ({ page }) => {
     await page.goto("/");
     const html = await page.content();
 
     // Count occurrences of the gtag script src
-    const matches = html.match(
-      /googletagmanager\.com\/gtag\/js\?id=G-TFBV6QLYQB/g,
-    );
+    const matches = html.match(/googletagmanager\.com\/gtag\/js\?id=G-TFBV6QLYQB/g);
     expect(matches).not.toBeNull();
     expect(matches!.length).toBe(1);
   });
@@ -31,8 +27,7 @@ test.describe("Analytics component (production build)", () => {
     const html = await page.content();
 
     // The script tag that loads gtag must have defer
-    const gtag_script_pattern =
-      /<script[^>]*googletagmanager\.com\/gtag\/js[^>]*>/;
+    const gtag_script_pattern = /<script[^>]*googletagmanager\.com\/gtag\/js[^>]*>/;
     const match = html.match(gtag_script_pattern);
     expect(match).not.toBeNull();
     expect(match![0]).toContain("defer");
@@ -42,16 +37,13 @@ test.describe("Analytics component (production build)", () => {
     await page.goto("/");
     const html = await page.content();
 
-    const gtag_script_pattern =
-      /<script[^>]*googletagmanager\.com\/gtag\/js[^>]*>/;
+    const gtag_script_pattern = /<script[^>]*googletagmanager\.com\/gtag\/js[^>]*>/;
     const match = html.match(gtag_script_pattern);
     expect(match).not.toBeNull();
     expect(match![0]).not.toContain("async");
   });
 
-  test("gtag script tag has is:inline (rendered inline in HTML)", async ({
-    page,
-  }) => {
+  test("gtag script tag has is:inline (rendered inline in HTML)", async ({ page }) => {
     await page.goto("/");
     const html = await page.content();
 

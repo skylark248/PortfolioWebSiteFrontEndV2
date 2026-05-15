@@ -32,9 +32,7 @@ for (const { path, label } of pages) {
       expect(html).toContain('property="og:description"');
     });
 
-    test("contains og:image meta tag pointing to og-default.png", async ({
-      page,
-    }) => {
+    test("contains og:image meta tag pointing to og-default.png", async ({ page }) => {
       await page.goto(path);
       const html = await page.content();
       expect(html).toContain('property="og:image"');

@@ -1,0 +1,30 @@
+---
+import { SEO as AstroSeo } from "astro-seo";
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+const siteName = "Shivansh Choudhary — Portfolio";
+---
+
+<AstroSeo
+  title={title}
+  description={description}
+  canonical={canonical}
+  openGraph={{
+    basic: { title, type: "website", image: ogImage, url: canonical },
+    optional: { description, siteName },
+    image: { alt: `${siteName} – ${title}`, width: 1200, height: 630 },
+  }}
+  twitter={{
+    card: "summary_large_image",
+    title,
+    description,
+    image: ogImage,
+  }}
+/>

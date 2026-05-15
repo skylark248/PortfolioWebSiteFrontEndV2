@@ -2,6 +2,8 @@
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
 import ThemeToggle from "../components/theme/ThemeToggle.astro";
+import SEO from "../components/seo/SEO.astro";
+import Analytics from "../components/analytics/Analytics.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -14,8 +16,7 @@ interface Props {
 const { title, description, canonical, ogImage } = Astro.props;
 const siteUrl = Astro.site!.toString();
 const fullCanonical = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
-// ogImageUrl is used by Plan 03's SEO component; keep here to avoid prop drift
-const _ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
+const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
 ---
 
 <!doctype html>
@@ -23,9 +24,14 @@ const _ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={fullCanonical} />
+
+    <SEO title={title} description={description} canonical={fullCanonical} ogImage={ogImageUrl} />
+
+    {/* RSS alternate link (SEO-04) */}
+    <link rel="alternate" type="application/rss+xml" title="Blog RSS" href="/rss.xml" />
+
+    {/* Sitemap reference (SEO-03) */}
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
     {
       /* INLINE BLOCKING THEME SCRIPT — runs before paint to prevent FOUC.
@@ -48,6 +54,8 @@ const _ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
     <Font cssVariable="--font-mono" />
 
     <ClientRouter />
+
+    <Analytics />
   </head>
   <body>
     <header>

@@ -38,9 +38,7 @@ describe("public/_headers security headers", () => {
   });
 
   it("contains Referrer-Policy strict-origin-when-cross-origin", () => {
-    expect(headersContent).toContain(
-      "Referrer-Policy: strict-origin-when-cross-origin",
-    );
+    expect(headersContent).toContain("Referrer-Policy: strict-origin-when-cross-origin");
   });
 
   it("contains Content-Security-Policy header", () => {
@@ -67,9 +65,7 @@ describe("public/_headers security headers", () => {
   });
 
   it("CSP contains connect-src allowing google analytics endpoints", () => {
-    expect(headersContent).toContain(
-      "connect-src 'self' https://www.google-analytics.com",
-    );
+    expect(headersContent).toContain("connect-src 'self' https://www.google-analytics.com");
   });
 
   it("contains Permissions-Policy", () => {

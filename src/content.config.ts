@@ -1,0 +1,49 @@
+import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
+
+const blog = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/blog" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().min(1).max(80),
+      description: z.string().min(1).max(160),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      draft: z.boolean().default(false),
+      tags: z.array(z.string()).default([]),
+      heroImage: image().optional(),
+    }),
+});
+
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/projects" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().min(1).max(80),
+      summary: z.string().min(1).max(200),
+      pubDate: z.coerce.date(),
+      draft: z.boolean().default(false),
+      tags: z.array(z.string()).default([]),
+      repoUrl: z.string().url().optional(),
+      demoUrl: z.string().url().optional(),
+      heroImage: image().optional(),
+      featured: z.boolean().default(false),
+    }),
+});
+
+const caseStudies = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/caseStudies" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().min(1).max(100),
+      description: z.string().min(1).max(200),
+      pubDate: z.coerce.date(),
+      draft: z.boolean().default(false),
+      tags: z.array(z.string()).default([]),
+      role: z.string().optional(),
+      timeline: z.string().optional(),
+      heroImage: image().optional(),
+    }),
+});
+
+export const collections = { blog, projects, caseStudies };

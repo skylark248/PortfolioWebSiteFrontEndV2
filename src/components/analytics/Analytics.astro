@@ -1,0 +1,19 @@
+---
+const GA_ID = "G-TFBV6QLYQB";
+const isProd = import.meta.env.PROD;
+
+// Injected as set:html to avoid prettier-plugin-astro parse errors on
+// `arguments` inside define:vars script blocks (known plugin limitation).
+const gaInlineScript = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');
+document.addEventListener('astro:after-swap', function() {
+  gtag('config', '${GA_ID}', { page_path: location.pathname });
+});
+`.trim();
+---
+
+{isProd && <script is:inline defer src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />}
+{isProd && <script is:inline set:html={gaInlineScript} />}
