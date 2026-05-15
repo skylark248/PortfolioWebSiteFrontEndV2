@@ -1,2 +1,17 @@
 /* src/styles/global.css */
 @import "tailwindcss";
+@import "./theme.css";
+
+/* Global reduced-motion respect (D-11) — pitfall B (no global scroll-behavior:smooth) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

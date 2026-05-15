@@ -1,0 +1,42 @@
+@theme {
+  /* Semantic color tokens (D-06; light defaults; dark override below) */
+  --color-bg: #faf7f2;
+  --color-ink: #1a1a1a;
+  --color-accent: #3d348b;
+  --color-muted: #6b6b6b;
+
+  /* Typography (D-08) */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Motion tokens (D-11) */
+  --motion-duration-fast: 120ms;
+  --motion-duration-base: 200ms;
+  --motion-duration-slow: 320ms;
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode tokens via [data-theme="dark"] selector (D-06, D-07) */
+:root[data-theme="dark"] {
+  --color-bg: #15151a;
+  --color-ink: #ececec;
+  --color-accent: #8b83ff;
+  --color-muted: #9a9a9a;
+}
+
+/* Tailwind v4 dark variant bound to data-theme attribute (RESEARCH Open Question 3) */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Base body color binding */
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/* AP-03: visible focus ring */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

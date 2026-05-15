@@ -1,0 +1,74 @@
+---
+import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
+import ThemeToggle from "../components/theme/ThemeToggle.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+const siteUrl = Astro.site!.toString();
+const fullCanonical = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+// ogImageUrl is used by Plan 03's SEO component; keep here to avoid prop drift
+const _ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={fullCanonical} />
+
+    {
+      /* INLINE BLOCKING THEME SCRIPT — runs before paint to prevent FOUC.
+        D-07: localStorage first, prefers-color-scheme fallback. */
+    }
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem("theme");
+          const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const theme = stored ?? (systemDark ? "dark" : "light");
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-mono" />
+
+    <ClientRouter />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">Home</a>
+        <ThemeToggle transition:persist />
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+
+    {/* astro:after-swap re-applies theme to prevent flash on View Transition nav. */}
+    <script is:inline>
+      document.addEventListener("astro:after-swap", () => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = stored ?? (systemDark ? "dark" : "light");
+        } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

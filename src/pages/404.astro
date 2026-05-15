@@ -1,15 +1,7 @@
 ---
-// Plan 02 will wire this to BaseLayout
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Not Found</title>
-  </head>
-  <body>
-    <h1>Not Found</h1>
-  </body>
-</html>
+<BaseLayout title="Page not found" description="The page you are looking for does not exist.">
+  <h1>Not Found</h1>
+</BaseLayout>

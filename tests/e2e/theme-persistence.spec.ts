@@ -25,18 +25,14 @@ test.describe("Theme persistence (MISC-03)", () => {
     await page.click("#theme-toggle");
 
     // Verify dark was set
-    const themeBefore = await page.evaluate(
-      () => document.documentElement.dataset.theme,
-    );
+    const themeBefore = await page.evaluate(() => document.documentElement.dataset.theme);
     expect(themeBefore).toBe("dark");
 
     // Navigate to /404 (triggering View Transitions if available)
     await page.goto("/404");
 
     // After navigation, data-theme should still be "dark"
-    const themeAfter = await page.evaluate(
-      () => document.documentElement.dataset.theme,
-    );
+    const themeAfter = await page.evaluate(() => document.documentElement.dataset.theme);
     expect(themeAfter).toBe("dark");
   });
 
@@ -61,9 +57,7 @@ test.describe("Theme persistence (MISC-03)", () => {
     await page.reload();
 
     // After reload, inline blocking script should restore dark theme
-    const themeAfterReload = await page.evaluate(
-      () => document.documentElement.dataset.theme,
-    );
+    const themeAfterReload = await page.evaluate(() => document.documentElement.dataset.theme);
     expect(themeAfterReload).toBe("dark");
   });
 
@@ -81,9 +75,7 @@ test.describe("Theme persistence (MISC-03)", () => {
     await darkPage.evaluate(() => localStorage.removeItem("theme"));
     await darkPage.reload();
 
-    const theme = await darkPage.evaluate(
-      () => document.documentElement.dataset.theme,
-    );
+    const theme = await darkPage.evaluate(() => document.documentElement.dataset.theme);
     expect(theme).toBe("dark");
 
     await darkContext.close();
@@ -102,9 +94,7 @@ test.describe("Theme persistence (MISC-03)", () => {
     await lightPage.evaluate(() => localStorage.removeItem("theme"));
     await lightPage.reload();
 
-    const theme = await lightPage.evaluate(
-      () => document.documentElement.dataset.theme,
-    );
+    const theme = await lightPage.evaluate(() => document.documentElement.dataset.theme);
     expect(theme).toBe("light");
 
     await lightContext.close();

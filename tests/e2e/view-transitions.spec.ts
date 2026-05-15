@@ -7,9 +7,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("View Transitions (FOUND-06)", () => {
-  test("page source contains astro:after-swap listener (ClientRouter active)", async ({
-    page,
-  }) => {
+  test("page source contains astro:after-swap listener (ClientRouter active)", async ({ page }) => {
     await page.goto("/");
     const content = await page.content();
     // The inline astro:after-swap listener is present in the page source
@@ -25,7 +23,7 @@ test.describe("View Transitions (FOUND-06)", () => {
   test("inline blocking theme script checks prefers-color-scheme dark", async ({ page }) => {
     await page.goto("/");
     const content = await page.content();
-    expect(content).toContain('prefers-color-scheme: dark');
+    expect(content).toContain("prefers-color-scheme: dark");
   });
 
   test("theme toggle button is present with transition:persist (via data-astro-transition-persist)", async ({

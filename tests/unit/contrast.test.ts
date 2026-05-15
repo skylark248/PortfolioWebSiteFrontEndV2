@@ -59,13 +59,13 @@ describe("D-06 palette WCAG AA contrast", () => {
   describe("Light mode", () => {
     const bg = "#FAF7F2";
 
-    it("light bg × ink (#1A1A1A) meets ≥ 4.5:1 (body text)", () => {
+    it("light bg × ink (#1A1A1A) meets >= 4.5:1 (body text)", () => {
       const ink = "#1A1A1A";
       const ratio = contrastRatio(bg, ink);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
 
-    it("light bg × muted (#6B6B6B) meets ≥ 3:1 (large text)", () => {
+    it("light bg × muted (#6B6B6B) meets >= 3:1 (large text)", () => {
       const muted = "#6B6B6B";
       const ratio = contrastRatio(bg, muted);
       expect(ratio).toBeGreaterThanOrEqual(3.0);
@@ -76,47 +76,47 @@ describe("D-06 palette WCAG AA contrast", () => {
   describe("Dark mode", () => {
     const bg = "#15151A";
 
-    it("dark bg × ink (#ECECEC) meets ≥ 4.5:1 (body text)", () => {
+    it("dark bg × ink (#ECECEC) meets >= 4.5:1 (body text)", () => {
       const ink = "#ECECEC";
       const ratio = contrastRatio(bg, ink);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
 
-    it("dark bg × muted (#9A9A9A) meets ≥ 3:1 (large text)", () => {
+    it("dark bg × muted (#9A9A9A) meets >= 3:1 (large text)", () => {
       const muted = "#9A9A9A";
       const ratio = contrastRatio(bg, muted);
       expect(ratio).toBeGreaterThanOrEqual(3.0);
     });
   });
 
-  // Accent tokens present in theme.css (spot-check — ensures the file exists)
+  // Accent tokens present in theme.css (spot-check -- ensures the file exists)
   describe("theme.css contains all D-06 hex values", () => {
-    const THEME_CSS_PATH = resolve(
-      process.cwd(),
-      "src/styles/theme.css",
-    );
+    const THEME_CSS_PATH = resolve(process.cwd(), "src/styles/theme.css");
 
     let themeContent: string;
 
     try {
-      themeContent = readFileSync(THEME_CSS_PATH, "utf-8");
+      // Read and lowercase so the check is case-insensitive
+      // (Prettier normalises hex values to lowercase in CSS files)
+      themeContent = readFileSync(THEME_CSS_PATH, "utf-8").toLowerCase();
     } catch {
-      themeContent = ""; // Will fail assertions below — RED confirmed
+      themeContent = ""; // Will fail assertions below -- RED confirmed
     }
 
+    // D-06 hex values in lowercase (matching Prettier-formatted output)
     const required = [
-      "#FAF7F2",
-      "#1A1A1A",
-      "#3D348B",
-      "#6B6B6B",
-      "#15151A",
-      "#ECECEC",
-      "#8B83FF",
-      "#9A9A9A",
+      "#faf7f2",
+      "#1a1a1a",
+      "#3d348b",
+      "#6b6b6b",
+      "#15151a",
+      "#ececec",
+      "#8b83ff",
+      "#9a9a9a",
     ];
 
     for (const hex of required) {
-      it(`theme.css contains ${hex}`, () => {
+      it(`theme.css contains ${hex.toUpperCase()}`, () => {
         expect(themeContent).toContain(hex);
       });
     }
