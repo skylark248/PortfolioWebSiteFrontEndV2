@@ -4,7 +4,7 @@ module.exports = {
       staticDistDir: "./dist",
       url: [
         "http://localhost/",
-        "http://localhost/404",
+        "http://localhost/404.html",
         // Phase 2+ adds: /blog/, one blog post URL, /projects/, one project URL,
         //               /case-studies/, one case-study URL, /resume, /contact.
       ],
