@@ -23,9 +23,9 @@ describe("CI workflow shape", () => {
     expect(content).toContain("name: CI");
   });
 
-  it("triggers on push to main", () => {
+  it("triggers on push to main or master", () => {
     expect(content).toContain("push:");
-    expect(content).toContain("[main]");
+    expect(content).toMatch(/branches:.*\[.*(main|master).*\]/s);
   });
 
   it("triggers on pull_request", () => {
