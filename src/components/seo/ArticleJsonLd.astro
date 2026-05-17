@@ -1,0 +1,40 @@
+---
+// src/components/seo/ArticleJsonLd.astro
+// Renders the JSON-LD Article structured data script tag inline.
+// This component renders the <script type="application/ld+json"> tag directly in-place.
+// Usage in layouts: compute the same ld object in frontmatter and pass JSON.stringify(ld)
+// to BaseLayout's jsonLd prop so it is placed in <head>.
+// This file documents the canonical JSON-LD shape and can be used where head placement is
+// not required (e.g. tests, or layouts that forward jsonLd to BaseLayout themselves).
+//
+// SECURITY: JSON.stringify is used — never template literal interpolation — to prevent
+// JSON injection through frontmatter field values (T-03-01 mitigation).
+
+interface Props {
+  headline: string;       // blog/case-study title (max 80 chars per schema)
+  description: string;
+  datePublished: Date;
+  dateModified?: Date;
+  image: string;          // fully-resolved URL string — og-default.png or resolved heroImage
+  url: string;            // canonical URL of the page
+}
+
+const { headline, description, datePublished, dateModified, image, url } = Astro.props;
+const siteUrl = "https://shivanshchoudhary.info";
+const authorName = "Shivansh Choudhary";
+
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline,
+  description,
+  datePublished: datePublished.toISOString(),
+  ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
+  author: { "@type": "Person", name: authorName, url: siteUrl },
+  publisher: { "@type": "Person", name: authorName, url: siteUrl },
+  image,
+  mainEntityOfPage: { "@type": "WebPage", "@id": url },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />

@@ -1,0 +1,56 @@
+---
+// src/components/mdx/Figure.astro
+// astro:assets Image wrapper for MDX (D-08, PROJ-06).
+// Enforces no bare <img> in MDX by providing this semantic <figure> wrapper.
+// src MUST be ImageMetadata from astro:assets — not a URL string.
+
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;   // MUST be ImageMetadata — not a URL string. Pass heroImage directly.
+  alt: string;
+  caption: string;
+  credit?: string;
+  loading?: "lazy" | "eager";  // default "lazy"; set "eager" for the first figure in a post
+}
+
+const { src, alt, caption, credit, loading = "lazy" } = Astro.props;
+---
+
+<figure class="mdx-figure">
+  <Image
+    src={src}
+    alt={alt}
+    loading={loading}
+    widths={[400, 800, 1200]}
+    sizes="min(65ch, 100vw - 2rem)"
+    class="figure-image"
+  />
+  <figcaption class="figure-caption">
+    {caption}{credit && <span class="figure-credit"> &mdash; {credit}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .mdx-figure {
+    margin: 32px 0;
+  }
+
+  .figure-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .figure-caption {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* .figure-credit is inline — rendered as " — {credit}" after the caption text */
+</style>

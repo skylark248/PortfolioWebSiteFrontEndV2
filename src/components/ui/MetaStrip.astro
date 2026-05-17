@@ -1,0 +1,72 @@
+---
+// src/components/ui/MetaStrip.astro
+// Flexible meta row atom used in both blog and case-study headers (D-06).
+// Renders dot-separated text items (date · reading time · role · timeline) and tag chips.
+
+import TagChip from "./TagChip.astro";
+
+interface Props {
+  date?: Date;
+  minutesRead?: string;   // e.g. "3 min read" — from remarkPluginFrontmatter (blog only, D-11)
+  role?: string;          // case study only
+  timeline?: string;      // case study only
+  tags?: string[];
+  collection?: "blog" | "projects" | "caseStudies";  // for tag link routing (D-12)
+}
+
+const {
+  date,
+  minutesRead,
+  role,
+  timeline,
+  tags = [],
+  collection = "blog",
+} = Astro.props;
+
+const formattedDate = date
+  ? date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  : null;
+
+// Build the text items for the meta strip (dot-separated)
+const textItems: string[] = [];
+if (formattedDate) textItems.push(formattedDate);
+if (minutesRead) textItems.push(minutesRead);
+if (role) textItems.push(role);
+if (timeline) textItems.push(timeline);
+---
+
+<div class="meta-strip">
+  {textItems.length > 0 && (
+    <span class="meta-text">{textItems.join(" · ")}</span>
+  )}
+  {tags.length > 0 && (
+    <div class="meta-tags">
+      {tags.map((tag) => (
+        <TagChip tag={tag} collection={collection} />
+      ))}
+    </div>
+  )}
+</div>
+
+<style>
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+
+  .meta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+</style>

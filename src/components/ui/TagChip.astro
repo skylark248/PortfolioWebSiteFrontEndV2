@@ -1,0 +1,55 @@
+---
+// src/components/ui/TagChip.astro
+// Reusable tag pill link atom. Links to the per-collection tag index page (D-12).
+// WCAG 2.5.5: min-height 44px for touch target compliance.
+
+interface Props {
+  tag: string;
+  collection: "blog" | "projects" | "caseStudies";
+}
+
+const { tag, collection } = Astro.props;
+
+// Map collection name to URL path segment (D-12 per-collection tag routes)
+const collectionPath =
+  collection === "caseStudies" ? "case-studies" : collection;
+const href = `/${collectionPath}/tags/${encodeURIComponent(tag)}`;
+---
+
+<a
+  href={href}
+  class="tag-chip"
+>
+  {tag}
+</a>
+
+<style>
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px; /* WCAG 2.5.5 touch target */
+    padding: 4px 8px;
+    border-radius: 9999px; /* pill shape */
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-decoration: none;
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    color: var(--color-muted);
+    border: 1px solid transparent;
+    transition:
+      color var(--motion-duration-fast) var(--motion-ease-out),
+      border-color var(--motion-duration-fast) var(--motion-ease-out);
+  }
+
+  .tag-chip:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tag-chip {
+      transition: none;
+    }
+  }
+</style>

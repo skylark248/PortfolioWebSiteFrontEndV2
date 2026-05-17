@@ -1,0 +1,70 @@
+---
+// src/components/mdx/Callout.astro
+// Boxed inline note/warn/tip MDX component (D-08).
+// Border color is type-specific: note=blue, warn=amber, tip=accent (UI-SPEC).
+// Accessibility: role="note" on container.
+
+interface Props {
+  type: "note" | "warn" | "tip";
+}
+
+const { type = "note" } = Astro.props;
+
+const config = {
+  note: { label: "Note",    borderColor: "#1d4ed8" },
+  warn: { label: "Warning", borderColor: "#b45309" },
+  tip:  { label: "Tip",     borderColor: "var(--color-accent)" },
+} as const;
+
+const { label, borderColor } = config[type];
+---
+
+<div
+  class="callout"
+  role="note"
+  style={`--callout-border: ${borderColor};`}
+>
+  <div class="callout-header">
+    <span class="callout-label">{label}</span>
+  </div>
+  <div class="callout-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .callout {
+    width: 100%;
+    border-left: 4px solid var(--callout-border);
+    border-radius: 0 4px 4px 0;
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    padding: 16px;
+    margin: 24px 0;
+  }
+
+  .callout-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .callout-label {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--callout-border);
+  }
+
+  .callout-body {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
+
+  /* Strip default margin from first/last child in body so padding looks even */
+  .callout-body :global(p:first-child) { margin-top: 0; }
+  .callout-body :global(p:last-child)  { margin-bottom: 0; }
+</style>
