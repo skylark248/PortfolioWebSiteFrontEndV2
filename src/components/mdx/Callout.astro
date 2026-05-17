@@ -16,12 +16,13 @@ const config = {
   tip:  { label: "Tip",     borderColor: "var(--color-accent)" },
 } as const;
 
-const { label, borderColor } = config[type];
+const { label, borderColor } = config[type] ?? config["note"];
 ---
 
 <div
   class="callout"
   role="note"
+  aria-label={label}
   style={`--callout-border: ${borderColor};`}
 >
   <div class="callout-header">

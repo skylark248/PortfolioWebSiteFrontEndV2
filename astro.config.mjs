@@ -23,7 +23,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: (page) =>
-        !page.includes("/draft/") && !page.endsWith("/_placeholder"),
+        !page.includes("/draft/") && !page.includes("/_placeholder"),
     }),
   ],
   markdown: {

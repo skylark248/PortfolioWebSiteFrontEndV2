@@ -32,16 +32,21 @@ const formattedDate = date
   : null;
 
 // Build the text items for the meta strip (dot-separated)
+const isoDate = date ? date.toISOString().slice(0, 10) : null;
+
 const textItems: string[] = [];
-if (formattedDate) textItems.push(formattedDate);
 if (minutesRead) textItems.push(minutesRead);
 if (role) textItems.push(role);
 if (timeline) textItems.push(timeline);
 ---
 
 <div class="meta-strip">
-  {textItems.length > 0 && (
-    <span class="meta-text">{textItems.join(" · ")}</span>
+  {(formattedDate || textItems.length > 0) && (
+    <span class="meta-text">
+      {formattedDate && (
+        <time datetime={isoDate}>{formattedDate}</time>
+      )}{formattedDate && textItems.length > 0 && " · "}{textItems.join(" · ")}
+    </span>
   )}
   {tags.length > 0 && (
     <div class="meta-tags">
