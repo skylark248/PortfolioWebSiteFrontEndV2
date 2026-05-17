@@ -1,0 +1,172 @@
+---
+// src/layouts/CaseStudyLayout.astro
+// Case study detail layout (D-06 header order, D-07 section index, D-18 JSON-LD, D-05 other strip).
+// Wraps BaseLayout and wires MDX components per-page (D-08, Research Pattern 7).
+
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "./BaseLayout.astro";
+import MetaStrip from "../components/ui/MetaStrip.astro";
+import SectionIndex from "../components/ui/SectionIndex.astro";
+import OtherCaseStudies from "../components/ui/OtherCaseStudies.astro";
+import Callout from "../components/mdx/Callout.astro";
+import Figure from "../components/mdx/Figure.astro";
+import Aside from "../components/mdx/Aside.astro";
+import { getPublishedCollection } from "../lib/content";
+
+interface Props {
+  entry: CollectionEntry<"caseStudies">;
+}
+
+const { entry } = Astro.props;
+
+// Render MDX — get headings for section index (D-07) and Content for MDX rendering
+const { Content, headings } = await render(entry);
+
+// Section index: only render when >= 4 H2s (D-07 — threshold at planning: >= 4)
+const h2Headings = headings.filter((h) => h.depth === 2);
+const showSectionIndex = h2Headings.length >= 4;
+
+// "Other case studies" — most-recent-2 siblings (D-05)
+const allCaseStudies = await getPublishedCollection("caseStudies");
+const others = allCaseStudies
+  .filter((cs) => cs.id !== entry.id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
+
+// JSON-LD Article (D-18, T-06-01 mitigation)
+const siteUrl = "https://shivanshchoudhary.info";
+const pageUrl = new URL(`/case-studies/${entry.id}/`, siteUrl).toString();
+const imageUrl = entry.data.heroImage
+  ? new URL(entry.data.heroImage.src, siteUrl).toString()
+  : new URL("/og-default.png", siteUrl).toString();
+
+const ldObject = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: entry.data.pubDate.toISOString(),
+  author: { "@type": "Person", name: "Shivansh Choudhary", url: siteUrl },
+  publisher: { "@type": "Person", name: "Shivansh Choudhary", url: siteUrl },
+  image: imageUrl,
+  mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+};
+// SECURITY: JSON.stringify — never string interpolation (T-06-01)
+const jsonLd = JSON.stringify(ldObject);
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  canonical={pageUrl}
+  ogImage={imageUrl}
+  jsonLd={jsonLd}
+>
+  <article class="case-study-detail">
+    <!-- Header block: title → subtitle → meta strip → hero image (D-06) -->
+    <header class="cs-header">
+      <h1 class="cs-title">{entry.data.title}</h1>
+      <p class="cs-subtitle">{entry.data.subtitle}</p>
+      <MetaStrip
+        role={entry.data.role}
+        timeline={entry.data.timeline}
+        tags={entry.data.tech}
+        collection="caseStudies"
+      />
+      {entry.data.heroImage && (
+        <div class="cs-hero">
+          <Image
+            src={entry.data.heroImage}
+            alt={entry.data.title}
+            loading="eager"
+            widths={[800, 1200, 1600]}
+            sizes="min(65ch, 100vw - 2rem)"
+            class="hero-image"
+          />
+        </div>
+      )}
+    </header>
+
+    <!-- Section index (D-07): rendered when >= 4 H2s -->
+    {showSectionIndex && <SectionIndex headings={h2Headings} />}
+
+    <!-- MDX prose body — MDX components registered per-page (D-08, Pattern 7) -->
+    <div class="cs-body">
+      <Content components={{ Callout, Figure, Aside }} />
+    </div>
+
+    <!-- "Other case studies" strip (D-05) -->
+    <OtherCaseStudies others={others} />
+  </article>
+</BaseLayout>
+
+<style>
+  .case-study-detail {
+    max-width: min(65ch, 100% - 2rem);
+    margin: 0 auto;
+    padding: 64px 1rem;
+  }
+
+  .cs-header {
+    margin-bottom: 32px;
+  }
+
+  .cs-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0 0 8px;
+  }
+
+  .cs-subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-muted);
+    margin: 0 0 12px;
+  }
+
+  .cs-hero {
+    margin-top: 16px;
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .cs-body {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
+
+  /* Heading anchor styles for rehype-autolink-headings (D-04) */
+  .cs-body :global(.heading-anchor) {
+    opacity: 0;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-right: 4px;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-out);
+  }
+
+  .cs-body :global(h2:hover .heading-anchor),
+  .cs-body :global(h3:hover .heading-anchor),
+  .cs-body :global(.heading-anchor:focus-visible) {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-body :global(.heading-anchor) { transition: none; }
+  }
+
+  /* Prose heading sizes (UI-SPEC Display / Heading roles) */
+  .cs-body :global(h2) { font-size: 32px; font-weight: 700; line-height: 1.25; margin: 48px 0 16px; }
+  .cs-body :global(h3) { font-size: 20px; font-weight: 700; line-height: 1.3; margin: 32px 0 12px; }
+</style>

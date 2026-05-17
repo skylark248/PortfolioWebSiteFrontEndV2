@@ -1,0 +1,119 @@
+---
+// src/components/ui/OtherCaseStudies.astro
+// "More case studies" strip shown at the bottom of each case study detail page (D-05).
+// Receives at most 2 sibling case studies (most-recent selection, current excluded).
+
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+
+interface Props {
+  others: CollectionEntry<"caseStudies">[];  // max 2 entries
+}
+
+const { others } = Astro.props;
+---
+
+{others.length > 0 && (
+  <section class="other-case-studies" aria-labelledby="other-cs-heading">
+    <p class="other-cs-label" id="other-cs-heading">More case studies</p>
+    <div class="other-cs-grid">
+      {others.map((cs) => (
+        <article class="other-cs-card">
+          {cs.data.heroImage && (
+            <Image
+              src={cs.data.heroImage}
+              alt={cs.data.title}
+              loading="lazy"
+              widths={[400, 800]}
+              sizes="(min-width: 480px) 50vw, 100vw"
+              class="other-cs-hero"
+            />
+          )}
+          <div class="other-cs-body">
+            <h3 class="other-cs-title">
+              <a href={`/case-studies/${cs.id}/`}>{cs.data.title}</a>
+            </h3>
+            <p class="other-cs-desc">{cs.data.description}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .other-case-studies {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
+  }
+
+  .other-cs-label {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    margin: 0 0 16px;
+  }
+
+  .other-cs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 479px) {
+    .other-cs-grid { grid-template-columns: 1fr; }
+  }
+
+  .other-cs-card {
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    border: 1px solid color-mix(in srgb, var(--color-muted) 15%, transparent);
+    border-radius: 4px;
+    overflow: hidden;
+    transition:
+      box-shadow var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+
+  .other-cs-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .other-cs-card { transition: none; }
+    .other-cs-card:hover { transform: none; box-shadow: none; }
+  }
+
+  .other-cs-hero {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  .other-cs-body { padding: 16px; }
+
+  .other-cs-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 8px;
+  }
+
+  .other-cs-title a {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .other-cs-title a:hover { text-decoration: underline; }
+
+  .other-cs-desc {
+    font-size: 16px;
+    color: var(--color-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>
