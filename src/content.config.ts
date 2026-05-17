@@ -43,6 +43,9 @@ const caseStudies = defineCollection({
       role: z.string().optional(),
       timeline: z.string().optional(),
       heroImage: image().optional(),
+      subtitle: z.string().min(1).max(80),    // D-10: required, shown on listing card + detail header
+      outcome: z.string().min(1).max(200),    // D-10: one-line result blurb for listing + metadata strip
+      tech: z.array(z.string()).default([]),  // D-10: toolset used (distinct from tags which are topical)
     }),
 });
 
