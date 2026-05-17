@@ -1,0 +1,90 @@
+---
+// src/pages/case-studies/tags/[tag].astro
+// Per-tag case studies listing (D-12, PROJ-05).
+// One page generated per unique tag in published case studies.
+
+import { Image } from "astro:assets";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TagChip from "../../../components/ui/TagChip.astro";
+import { getPublishedCollection } from "../../../lib/content";
+
+export async function getStaticPaths() {
+  const caseStudies = await getPublishedCollection("caseStudies");
+  const allTags = [...new Set(caseStudies.flatMap((cs) => cs.data.tags))];
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      caseStudies: caseStudies
+        .filter((cs) => cs.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, caseStudies } = Astro.props;
+const displayTag = tag.charAt(0).toUpperCase() + tag.slice(1);
+---
+
+<BaseLayout
+  title={`${displayTag} — Case Studies`}
+  description={`All case studies tagged ${tag}.`}
+>
+  <div class="tag-listing">
+    <header class="tag-header">
+      <h1 class="tag-title">{displayTag}</h1>
+      <p class="tag-description">
+        All case studies tagged {tag} — {caseStudies.length} {caseStudies.length === 1 ? "entry" : "entries"}
+      </p>
+    </header>
+
+    {caseStudies.length === 0 ? (
+      <p class="empty-state">No case studies tagged {tag} yet.</p>
+    ) : (
+      <div class="cs-list">
+        {caseStudies.map((cs) => (
+          <article class="cs-feature-card">
+            {cs.data.heroImage && (
+              <Image
+                src={cs.data.heroImage}
+                alt={cs.data.title}
+                loading="lazy"
+                widths={[800, 1200]}
+                sizes="min(64rem, 100vw - 2rem)"
+                class="cs-hero"
+              />
+            )}
+            <div class="cs-card-body">
+              <h2 class="cs-card-title">
+                <a href={`/case-studies/${cs.id}/`}>{cs.data.title}</a>
+              </h2>
+              <p class="cs-card-subtitle">{cs.data.subtitle}</p>
+              <p class="cs-description">{cs.data.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-listing { max-width: 64rem; margin: 0 auto; padding: 64px 1rem; }
+  .tag-header { margin-bottom: 40px; }
+  .tag-title { font-size: 32px; font-weight: 700; line-height: 1.2; color: var(--color-ink); margin: 0 0 8px; }
+  .tag-description { font-size: 14px; color: var(--color-muted); margin: 0; }
+  .cs-list { display: flex; flex-direction: column; gap: 32px; }
+  .cs-feature-card {
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .cs-hero { width: 100%; aspect-ratio: 2.5 / 1; object-fit: cover; display: block; }
+  .cs-card-body { padding: 24px; }
+  .cs-card-title { font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px; }
+  .cs-card-title a { color: var(--color-ink); text-decoration: none; }
+  .cs-card-title a:hover { text-decoration: underline; }
+  .cs-card-subtitle { font-size: 20px; font-weight: 400; color: var(--color-muted); margin: 0 0 8px; }
+  .cs-description { font-size: 16px; color: var(--color-ink); margin: 0; line-height: 1.6; }
+  .empty-state { font-size: 20px; font-weight: 700; color: var(--color-muted); text-align: center; margin-top: 64px; }
+</style>

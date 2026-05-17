@@ -1,0 +1,21 @@
+---
+// src/pages/case-studies/[...slug].astro
+// Case study detail route — delegates all rendering to CaseStudyLayout (PROJ-04).
+// getPublishedCollection used so draft slugs never generate routes (T-06-02).
+
+import type { GetStaticPaths } from "astro";
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
+import { getPublishedCollection } from "../../lib/content";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const caseStudies = await getPublishedCollection("caseStudies");
+  return caseStudies.map((cs) => ({
+    params: { slug: cs.id },
+    props: { entry: cs },
+  }));
+};
+
+const { entry } = Astro.props;
+---
+
+<CaseStudyLayout entry={entry} />
