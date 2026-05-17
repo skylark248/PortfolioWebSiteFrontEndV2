@@ -1,0 +1,20 @@
+---
+title: "Investment Tracker Platform"
+summary: "Led delivery of a cross-system fund transparency platform — integrating DMS, external APIs, and accounting via Kafka. Reduced document processing delays by 40% across 5,000+ funds."
+pubDate: 2026-05-17
+draft: false
+tags: ["java", "spring-boot", "kafka", "react", "full-stack", "enterprise"]
+featured: true
+---
+
+The Investment Tracker Platform was the flagship delivery project during my time at NAV Fund Administration Group — a full-stack system built to give fund administrators, operations teams, and management a single unified view of investment document state across a portfolio of 5,000+ funds.
+
+Before the platform existed, document workflows were distributed across a Document Management System, external fund data providers, and an internal accounting system that operated on separate schedules. Analysts reconciled state manually every day. When quarter-end processing fell behind, nobody knew until it was already late.
+
+The platform replaced that fragmented picture with a real-time view. Spring Boot schedulers polled the Document Management System on configurable intervals, normalized document state events, and published them to Kafka topics. Downstream consumers processed those events, applied business rules around state transitions and stalled-document detection, and wrote to both a SQL Server transactional store and a Cassandra reporting tier optimized for the dashboard query patterns. A React frontend — built by a separate team against API contracts I defined and maintained — presented fund-level and portfolio-level dashboards to 2,500+ daily users.
+
+As lead engineer on the backend, I owned the service architecture, the Kafka pipeline design, the database schema decisions (including the choice to introduce Cassandra for the read layer), and the API contracts. I also coordinated with operations stakeholders to translate reporting requirements into data model decisions that could be answered efficiently at query time.
+
+The outcome: document processing time fell 40%, the manual daily reconciliation was eliminated, and the platform scaled to 10M+ document state records without impacting transactional write performance.
+
+Read the full case study: [Investment Tracker Platform](/case-studies/investment-tracker-platform/)

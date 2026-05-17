@@ -1,0 +1,69 @@
+---
+title: "Migrating Five Production Microservices from Java 8 to Java 21"
+description: "Planning and executing a Java 8-to-21 LTS migration across five production microservices — what broke, what improved, and what surprised us."
+pubDate: 2026-05-17
+draft: false
+tags: ["java", "microservices", "performance", "migration", "jvm"]
+---
+
+When the announcement came that Java 8 extended-support windows were narrowing and our internal platform team wanted to standardize on a single LTS baseline, the answer felt obvious on paper: migrate to Java 21. The harder question was *how*, with five services that had been running on Java 8 in production for years — each with its own dependency surface, its own quirks, and its own set of stakeholders who were very comfortable with "if it ain't broke."
+
+This is a walkthrough of how we approached that migration, what actually broke, what measurably improved, and the two things that surprised me most along the way.
+
+## Why Java 21 — Not 17 or 11
+
+The first decision was which LTS to target. Java 11 was tempting — it was already a mature target with well-documented migration paths from Java 8. Java 17 offered sealed classes and pattern matching previews. But Java 21 was the argument we kept coming back to: it delivered Virtual Threads as a stable GA feature (Project Loom), finalized record patterns, introduced sequenced collections, and carried a long LTS support window. For a platform that was migrating once and then staying put, Java 21 offered the best three-to-five year value proposition.
+
+Virtual Threads was particularly relevant to us. Several of our services run Spring Boot with blocking I/O — JDBC calls, external API invocations, and file processing pipelines. The theoretical throughput gains from Virtual Threads without a full reactive rewrite were worth the upgrade path alone. We didn't end up enabling Virtual Threads immediately (more on that shortly), but having the option in the same JDK we were already running was strategically important.
+
+## Scope and Sequencing
+
+Five microservices, all part of the investment platform ecosystem:
+
+- A document ingestion scheduler (Spring Boot, batch-heavy)
+- A fund data synchronization service (Spring Boot, high-frequency Kafka consumer)
+- A reporting aggregation service (Spring Boot, compute-heavy)
+- An internal API gateway (Spring Boot, thin proxy layer)
+- A background notification dispatcher (Spring Boot, low-volume, high-reliability)
+
+We sequenced from lowest-risk to highest-risk. The notification dispatcher went first — fewest dependencies, easiest to roll back, and lowest blast radius if something unexpected happened. The Kafka consumer went last, since a consumer lag incident in production would be immediately visible and painful.
+
+Each service went through the same checklist: update `pom.xml` to `<java.version>21</java.version>`, update the Docker base image from `eclipse-temurin:8-jre-alpine` to `eclipse-temurin:21-jre-alpine`, run the full test suite, then do a dependency audit.
+
+## What Actually Broke
+
+The dependency audit was where most of the real work lived.
+
+**Byte-buddy and reflection access.** Several of our libraries — including an older version of Mockito and a custom instrumentation library — used deep reflection into JDK internals that Java 9's module system had restricted and Java 17 sealed further. These generated `InaccessibleObjectException` warnings on Java 11 and outright failures on Java 21 in some cases. The fix was straightforward: upgrade Mockito to a version with proper Java 21 support, and remove the custom instrumentation that was no longer necessary once we upgraded our APM agent.
+
+**Javax to Jakarta namespace.** Two of our services depended on transitive javax.* APIs that had been renamed to jakarta.* in newer versions of their respective libraries. This bit us when upgrading Spring Boot to 3.x as part of the migration (Spring Boot 3 requires Jakarta EE 9+). We had assumed the Java version bump and the Spring Boot upgrade were independent operations — they were not, because Spring Boot 3 requires Java 17 minimum, and we were already pushing to 21. This turned one migration into two coordinated changes per service.
+
+**Removed internal Sun APIs.** One service had a long-standing utility class that called `sun.misc.BASE64Encoder` — a pattern that was never public API but had worked on Java 8 for years. This class was removed in Java 11. Replacing it with `java.util.Base64` took about ten minutes, but it was a reminder that technical debt in the form of internal API usage does eventually come due.
+
+**Serialization changes.** The reporting aggregation service used Java serialization (ObjectOutputStream/ObjectInputStream) for a caching layer that pre-dated our Kafka infrastructure. Some serialized class graphs failed to deserialize cleanly after the JDK bump, because stricter serialization filters in Java 17+ rejected some patterns we were relying on implicitly. This was the most disruptive issue — it required a cache-clear deploy window and a refactor to use JSON serialization instead, which we had been meaning to do anyway.
+
+## What Measurably Improved
+
+The most concrete and immediate improvement was GC behavior. Our production GC monitoring showed the following across three services after migration (same JVM heap configuration, same workload):
+
+- Document ingestion scheduler: average GC pause dropped from ~150ms to ~45ms
+- Reporting aggregation service: full GC events per 24-hour window dropped from 3-4 to 0 (G1GC with the same heap settings handled compaction far more gracefully on Java 21)
+- Kafka consumer: throughput in peak windows increased noticeably once G1GC stop-the-world pauses no longer competed with consumer poll intervals
+
+The GC story is partly about G1GC maturation between Java 8 and 21 — Google and the JVM team shipped substantial tuning improvements across those twelve releases — and partly about default heap behavior. Java 21's default G1GC configuration is simply better calibrated for modern server workloads than Java 8's defaults were.
+
+Container awareness was a secondary but real win. Java 8 (pre-8u191) was notoriously unaware of Docker CPU and memory limits, which meant our services were allocating heap based on the host machine's full RAM rather than the container's limits. Java 21 has full container awareness built in. We removed several explicit `-Xmx` flags that were working around this issue and let the JVM self-configure — the results were cleaner resource utilization with no behavioral regression.
+
+## The Two Surprises
+
+**Virtual Threads in practice.** I expected to flip on Virtual Threads for our blocking-I/O services immediately and see throughput gains. The reality was more nuanced. Virtual Threads in Spring Boot 3 + Tomcat require `spring.threads.virtual.enabled=true`, and the moment we enabled it on the Kafka consumer service, we hit a pinning issue: a synchronized block deep in the JDBC driver was pinning carrier threads during long SQL Server queries. This is a known issue with legacy JDBC drivers and Virtual Threads. We ended up enabling Virtual Threads only on the API gateway (thin, non-blocking-heavy proxy work) and deferring it on the JDBC-heavy services until the driver situation improves. The lesson: Virtual Threads are available on Java 21, but readiness of your entire dependency tree matters as much as JDK readiness.
+
+**ZGC and heap sizing.** We briefly tested ZGC on the reporting aggregation service after seeing the G1GC improvements and wanting to push further. ZGC's sub-millisecond pause promises looked attractive for the compute-heavy aggregation workload. What we found was that ZGC wanted significantly more heap headroom than G1GC for the same workload — its concurrent marking strategy trades pause time for heap overhead. With our container memory limits, ZGC was actually *more* likely to trigger out-of-memory conditions than G1GC was. We reverted to G1GC. ZGC is a strong choice when memory is plentiful; in constrained containers, G1GC remains the better default.
+
+## Closing Thoughts
+
+The migration took about six weeks end-to-end, spread across the five services. Most of that time was not in the JDK upgrade itself but in the dependency upgrades it triggered (Spring Boot 3, updated Mockito, JDBC driver updates, cache refactor). The Java version bump is the easy part of a Java 8-to-21 migration. The harder part is the accumulated technical debt in your dependency graph that the version bump surfaces.
+
+What I would do differently: start the dependency audit before any code changes. Run `mvn dependency:tree` against every service, identify anything that touches internal JDK APIs or pre-module-system reflection, and plan those upgrades first. The Spring Boot 2-to-3 upgrade, in particular, deserves its own project ticket and its own test cycle — don't treat it as a side effect of the Java bump.
+
+The outcome was worth it. We are now on a supported LTS baseline with a clear path to Java 25 when that cycle comes, GC behavior is measurably better, and the services that were on Virtual Threads candidates are positioned to migrate once the JDBC ecosystem catches up. The technical debt we paid off along the way was overdue regardless.

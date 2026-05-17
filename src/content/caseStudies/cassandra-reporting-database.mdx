@@ -1,0 +1,53 @@
+---
+title: "Cassandra Reporting Database"
+subtitle: "From minutes-long queries to sub-second analytics reads"
+description: "Designed and deployed a Cassandra-based reporting tier to offload analytics from an overloaded SQL Server — reducing report generation from minutes to seconds across 10M+ records."
+outcome: "Report generation dropped from 3+ minutes to under 5 seconds; SQL Server query contention eliminated; 10M+ records served from purpose-built read layer."
+pubDate: 2026-05-17
+draft: false
+tags: ["cassandra", "database", "distributed-systems", "performance", "java"]
+tech: ["Apache Cassandra", "Java", "Spring Boot", "Docker", "Spring Data Cassandra", "CQL"]
+role: "Architect and Lead Implementer"
+timeline: "2022 – 2023"
+---
+
+## Problem
+
+The investment platform's SQL Server database was doing double duty: it was both the transactional system of record for fund and document state, and the data source for a growing set of reporting queries. Over time, as the fund count grew past 3,000 and reporting usage expanded across the operations team, the two workloads started competing.
+
+Analytics queries — report generation for fund portfolios, cross-fund aggregations, date-range summaries — are read-heavy and often long-running by nature. Running these against the same SQL Server instance that was handling transactional writes created query contention that showed up in two ways: report generation times climbing to 3-5 minutes during peak hours, and transactional write latency increasing as reporting queries held table-level read locks.
+
+The question was not whether to separate these workloads — that was clear. The question was which read store to add and how to keep it consistent with the transactional source.
+
+## Role
+
+I proposed the Cassandra-based solution, presented the architectural rationale to the team, and owned the end-to-end implementation: schema design, Java data layer, Docker deployment, and the write path integration with the existing Kafka pipeline.
+
+This was an architectural decision with alternatives on the table (indexed SQL Server read replicas, a Redis-based cache layer, a dedicated SQL Server reporting instance). The Cassandra choice required making a case for a new technology in the stack — one the team had not operated before — so part of the work was building enough operational confidence through documentation and runbooks for the team to maintain it after initial deployment.
+
+## Approach
+
+**Schema design first.** Cassandra's query model inverts the relational approach: you model tables around query patterns, not around normalized entities. I started by cataloguing the six reporting queries that accounted for 80% of the SQL Server reporting load and designing Cassandra tables to answer each query with a single partition key lookup. Fund-level reports partitioned by `(fund_id, report_date_bucket)`. Cross-fund aggregation queries got a separate table partitioned by `(portfolio_id, date_bucket)`. Denormalization was intentional and documented.
+
+**Write path via Kafka.** Rather than dual-writing from the application layer, the Cassandra write path was an additional Kafka consumer. When document state changes were committed to the Kafka topics (from the schedulers running against the Document Management System), a dedicated Cassandra consumer materialized those events into the read-optimized tables. This kept the Cassandra state eventually consistent with SQL Server with a typical lag of under two seconds during normal operation.
+
+**Compaction strategy.** Write-heavy analytics tables used `LeveledCompactionStrategy` (LCS) for predictable read performance at the cost of higher write amplification — acceptable given the read-to-write ratio on this tier. The document state tables, which were written frequently and queried with time-range predicates, used `TimeWindowCompactionStrategy` (TWCS) to co-locate data by time bucket and minimize tombstone accumulation.
+
+**Docker deployment.** The Cassandra cluster ran in Docker Swarm alongside the existing platform services. I wrote the Docker Compose configuration for a three-node cluster with rack-aware replication, and documented the node addition and replacement runbook that the operations team would need.
+
+## Outcome
+
+Report generation for the most commonly used fund-level reports dropped from an average of 3+ minutes to under 5 seconds — a latency reduction of over 96%. The SQL Server transactional tier's query contention cleared immediately after the reporting traffic shifted to Cassandra: write latency returned to baseline and the lock contention incidents stopped.
+
+The Cassandra layer handled 10M+ document state records across its tables at steady state, with read performance stable across fund counts up to the platform's current maximum.
+
+The operational concern about running Cassandra — a system new to the team — was addressed through schema documentation, two architecture walkthroughs with the senior engineers, and runbooks for the most likely failure scenarios (node loss, tombstone accumulation, compaction backlog). The cluster ran without incident for the duration of my time on the project.
+
+## Tech
+
+- **Apache Cassandra** — Primary read store; query-pattern-driven schema with LCS and TWCS compaction
+- **CQL (Cassandra Query Language)** — Schema DDL, query definitions, partition key design
+- **Java** — Cassandra data access layer using Spring Data Cassandra
+- **Spring Boot** — Application framework wrapping the Cassandra consumer and REST read layer
+- **Apache Kafka** — Write path; dedicated consumer materializing events into Cassandra tables
+- **Docker / Docker Swarm** — Three-node cluster deployment and service orchestration

@@ -1,0 +1,17 @@
+---
+title: "Java 8 to 21 Microservices Migration"
+summary: "Migrated five production microservices from Java 8 to Java 21 LTS — eliminating G1GC full-GC events, improving average GC pause times by ~70%, and establishing a clear long-term platform baseline."
+pubDate: 2026-05-17
+draft: false
+tags: ["java", "microservices", "jvm", "performance", "devops"]
+---
+
+Five production Spring Boot microservices at NAV Fund Administration Group were running on Java 8 — a runtime approaching end-of-community-support and increasingly misaligned with the Spring Boot 3.x upgrade path we needed for other reasons. The migration to Java 21 LTS was primarily a platform supportability decision, but it produced measurable performance improvements as a side effect.
+
+The migration sequenced from lowest-risk to highest-risk: notification dispatcher first, Kafka consumer last. Each service went through a three-step process: JDK upgrade and base image swap (eclipse-temurin:8-jre-alpine to eclipse-temurin:21-jre-alpine), full dependency audit for internal API usage and module-system incompatibilities, and coordinated Spring Boot 2-to-3 upgrade (required because Spring Boot 3 mandates Java 17 minimum, making the two changes interdependent).
+
+The dependency audit was where most of the complexity lived. Legacy use of `sun.misc.BASE64Encoder`, byte-buddy reflection access in testing libraries, and Java serialization patterns that stricter JVM filters rejected in Java 17+ all required targeted fixes. The Spring Boot 3 migration additionally triggered a javax-to-jakarta namespace update in two services.
+
+The GC improvements were the most concrete outcome. Average GC pause times dropped from ~150ms to ~45ms on the document ingestion scheduler. Full GC events on the reporting aggregation service — 3-4 per 24-hour window before migration — dropped to zero after migration under equivalent workloads. Java 21's container awareness also allowed removal of explicit -Xmx flags that had been working around Java 8's inability to read Docker container memory limits.
+
+The migration also surfaced a useful lesson about Virtual Threads: enabling them on JDBC-heavy services requires confirmed non-synchronized JDBC driver codepaths, and the driver ecosystem was not fully ready at migration time. Virtual Threads were enabled selectively on the API gateway and deferred on JDBC-heavy services pending driver updates.

@@ -1,0 +1,15 @@
+---
+title: "Kafka Data Ingestion Pipeline"
+summary: "Replaced manual batch imports with a Kafka-based ingestion pipeline — reducing manual data-entry effort by 70% and achieving 99.9% reliability across high-volume fund data feeds."
+pubDate: 2026-05-17
+draft: false
+tags: ["kafka", "java", "distributed-systems", "backend", "data-engineering"]
+---
+
+Fund data at NAV Fund Administration Group arrived from multiple external providers on irregular schedules — daily files, intraday feeds, and event-driven updates that needed to be reconciled against internal records. The original process relied on manually triggered batch imports: an operator would download files, validate them against expected schemas, import them via a database loader, and flag discrepancies for review. At peak periods this was consuming 30+ hours of analyst time per week.
+
+The pipeline replaced that process with a Kafka-based ingestion architecture. Each data provider's feed format was mapped to a normalized ingestion schema and published to a dedicated Kafka topic. Consumer groups downstream processed events through a two-stage pipeline: a staging layer that applied schema validation and enrichment, and a reconciliation layer that compared incoming records against the current internal state and generated exception reports for genuine discrepancies rather than false positives from timing differences.
+
+The staging and reconciliation design was the key reliability mechanism. Previous batch imports had a high false-positive rate — records flagged as errors simply because they arrived before the internal system had processed a preceding event. The pipeline's event ordering guarantees, combined with a configurable reconciliation window per data type, brought the exception report noise down dramatically. Operations staff spent time reviewing genuine discrepancies rather than triaging timing artifacts.
+
+The pipeline achieved 99.9% reliability across two years of production operation, processing millions of fund data records per week. Manual import effort dropped by 70%, freeing analyst capacity for exception handling and client-facing work rather than data plumbing.

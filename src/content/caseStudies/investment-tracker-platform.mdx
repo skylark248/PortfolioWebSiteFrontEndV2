@@ -1,0 +1,54 @@
+---
+title: "Investment Tracker Platform"
+subtitle: "End-to-end fund transparency across 5,000+ portfolios"
+description: "Led delivery of a cross-system Investment Tracker integrating a DMS, external fund APIs, and internal accounting — reducing document processing delays by 40% across 5,000+ funds."
+outcome: "40% reduction in document processing time; real-time visibility across 5,000+ funds and 10M+ records for 2,500+ daily users."
+pubDate: 2026-05-17
+draft: false
+tags: ["java", "spring-boot", "kafka", "full-stack", "enterprise"]
+tech: ["Java", "Spring Boot", "React", "Apache Kafka", "SQL Server", "Cassandra", "Spring Scheduler"]
+role: "Lead Software Engineer"
+timeline: "2022 – 2024"
+---
+
+## Problem
+
+Fund administrators at NAV Fund Administration Group managed document workflows across a fragmented set of systems: a Document Management System for fund filings, external data providers for fund-level metrics, and an internal accounting platform that operated on its own schedule. There was no unified view of where a document was in its lifecycle, which funds had outstanding items, or how processing delays correlated with downstream accounting entries.
+
+The result was predictable: analysts were manually reconciling state across three systems on a daily basis. When document processing fell behind — which happened frequently during quarter-end cycles — there was no early-warning signal. Fund managers would discover delays after the fact, and incident triage meant pulling logs from systems that did not speak to each other.
+
+The platform needed a single source of truth for investment document state, with automated status tracking and real-time dashboards that reflected the actual current state rather than a daily export.
+
+## Role
+
+I joined this project as a contributor during its initial scoping and became the lead engineer responsible for the backend architecture and delivery. That meant owning the Spring Boot service layer, the Kafka-based event pipeline, the database schema (SQL Server for transactional state, Cassandra for read-heavy reporting), and coordination with the React frontend team.
+
+I also interfaced directly with fund operations stakeholders to translate their reporting requirements into schema decisions — specifically, what data needed to be available at query time versus what could be computed on demand.
+
+## Approach
+
+The architecture centered on three moving parts working together.
+
+**Scheduler-driven document ingestion.** Spring Scheduler jobs ran on configurable intervals to pull document status updates from the Document Management System. Rather than exposing the DMS API directly to the reporting layer, the schedulers normalized events into a standard document-state schema and published them to Kafka topics. This decoupled document ingestion latency from reporting latency — the dashboards always reflected the latest Kafka-committed state, regardless of DMS API response times.
+
+**Kafka event pipeline.** Kafka consumers downstream of the schedulers processed document events and applied business rules: detecting state transitions (pending → in-review → approved), triggering notifications for stalled documents, and writing both to SQL Server (transactional audit log) and Cassandra (read-optimized reporting views). The Cassandra write path was designed around the specific query patterns the dashboards needed — partition keys chosen to support fund-level and date-range queries without full-table scans.
+
+**React dashboard layer.** The frontend team built fund-level and portfolio-level dashboard views against REST endpoints backed by the Cassandra read layer. I defined and documented the API contracts and owned the Spring Boot REST controllers, ensuring the response shapes matched what the dashboard needed without requiring client-side aggregation.
+
+Integration with the external accounting system was handled via a scheduled reconciliation job that compared Kafka-committed document state against accounting system entries and flagged discrepancies for operations review.
+
+## Outcome
+
+Document processing time fell by 40% within three months of platform deployment. The primary driver was visibility: operations staff could see document queue depth in real time and prioritize interventions before delays compounded. The manual daily reconciliation process was eliminated.
+
+The platform served 5,000+ active funds and processed over 10 million document state records, with 2,500+ daily active users across fund administration, operations, and management reporting roles. The Cassandra reporting layer handled peak query loads without impacting the SQL Server transactional tier.
+
+## Tech
+
+- **Java** — Core service language across all backend components
+- **Spring Boot** — Application framework; REST API, schedulers, Kafka consumers
+- **Apache Kafka** — Event pipeline between document ingestion and reporting layers
+- **Spring Scheduler** — Configurable polling jobs for DMS and accounting system integration
+- **React** — Frontend dashboard layer (led by a separate team; I owned the API contracts)
+- **SQL Server** — Transactional state and audit log
+- **Cassandra** — Read-optimized reporting store; partitioned for fund-level and date-range queries
