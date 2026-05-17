@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from "astro";
+import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
+import { getPublishedCollection } from "../../lib/content";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Sort ascending by pubDate so prev/next are correctly ordered (oldest first)
+  const posts = (await getPublishedCollection("blog")).sort(
+    (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  );
+
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      entry: post,
+      prevPost: posts[i - 1] ?? null, // older post (chronologically before)
+      nextPost: posts[i + 1] ?? null, // newer post (chronologically after)
+    },
+  }));
+};
+
+const { entry, prevPost, nextPost } = Astro.props;
+---
+
+<BlogPostLayout entry={entry} prevPost={prevPost} nextPost={nextPost} />
