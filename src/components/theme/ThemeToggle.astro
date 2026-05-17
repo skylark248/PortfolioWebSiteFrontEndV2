@@ -7,18 +7,23 @@
 </button>
 
 <script>
-  const btn = document.getElementById("theme-toggle");
-  function syncAriaPressed() {
-    const isDark = document.documentElement.dataset.theme === "dark";
-    btn?.setAttribute("aria-pressed", String(isDark));
-  }
-  syncAriaPressed();
-  btn?.addEventListener("click", () => {
-    const current = document.documentElement.dataset.theme;
-    const next = current === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem("theme", next);
+  function setup() {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    function syncAriaPressed() {
+      const isDark = document.documentElement.dataset.theme === "dark";
+      btn.setAttribute("aria-pressed", String(isDark));
+    }
     syncAriaPressed();
-  });
-  document.addEventListener("astro:after-swap", syncAriaPressed);
+    btn.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme;
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem("theme", next);
+      syncAriaPressed();
+    });
+  }
+  // astro:page-load fires on initial load AND after every View Transition swap,
+  // ensuring the click handler is always bound to the current button element.
+  document.addEventListener("astro:page-load", setup);
 </script>
