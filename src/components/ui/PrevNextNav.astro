@@ -1,0 +1,74 @@
+---
+// src/components/ui/PrevNextNav.astro
+// Prev/next post navigation for blog detail pages (D-05).
+// Two-column layout: "← {prev title}" | "{next title} →"
+// Titles truncate at 60 chars with ellipsis (UI-SPEC copywriting contract).
+// Colors: --color-muted at rest, --color-ink on hover.
+
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  prevPost?: CollectionEntry<"blog"> | null;
+  nextPost?: CollectionEntry<"blog"> | null;
+}
+
+const { prevPost = null, nextPost = null } = Astro.props;
+
+// Truncate title at 60 chars (UI-SPEC copywriting contract)
+function truncateTitle(title: string): string {
+  return title.length > 60 ? `${title.slice(0, 57)}…` : title;
+}
+---
+
+{(prevPost || nextPost) && (
+  <nav class="prev-next-nav" aria-label="Post navigation">
+    <div class="prev-slot">
+      {prevPost && (
+        <a href={`/blog/${prevPost.id}/`} class="nav-link nav-prev">
+          &larr; {truncateTitle(prevPost.data.title)}
+        </a>
+      )}
+    </div>
+    <div class="next-slot">
+      {nextPost && (
+        <a href={`/blog/${nextPost.id}/`} class="nav-link nav-next">
+          {truncateTitle(nextPost.data.title)} &rarr;
+        </a>
+      )}
+    </div>
+  </nav>
+)}
+
+<style>
+  .prev-next-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
+  }
+
+  .next-slot {
+    text-align: right;
+  }
+
+  .nav-link {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color var(--motion-duration-fast) var(--motion-ease-out);
+  }
+
+  .nav-link:hover {
+    color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-link {
+      transition: none;
+    }
+  }
+</style>
