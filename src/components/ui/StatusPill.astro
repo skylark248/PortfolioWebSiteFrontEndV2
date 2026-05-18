@@ -1,0 +1,26 @@
+---
+// Neutral status pill atom — D-03 (NOT green, NOT accent; overrides LAND-01 "open to work" framing).
+interface Props {
+  label: string;       // visible text, e.g. "Currently @ Morgan Stanley"
+  ariaLabel?: string;  // optional long-form for assistive tech
+}
+const { label, ariaLabel } = Astro.props;
+---
+<span class="status-pill" aria-label={ariaLabel}>{label}</span>
+
+<style>
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    height: 28px;                    /* UI-SPEC: pill height 28px, not a touch target */
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-muted);
+    background: color-mix(in srgb, var(--color-muted) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
+    /* No transition — pill is static, not interactive. */
+  }
+</style>
