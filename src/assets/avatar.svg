@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Placeholder avatar: grey circle with "SC" initials -->
+  <!-- PLACEHOLDER — replace with avatar.jpg (place at src/assets/avatar.jpg and update Hero.astro import) -->
+  <circle cx="128" cy="128" r="128" fill="#94a3b8"/>
+  <text
+    x="128"
+    y="128"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="88"
+    font-weight="700"
+    fill="#ffffff"
+    letter-spacing="-2"
+  >SC</text>
+</svg>
