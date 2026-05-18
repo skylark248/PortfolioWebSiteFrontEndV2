@@ -1,0 +1,65 @@
+---
+// LAND-04: skills as text-only tags grouped by category — no rating bars, no logo grid, no <meter>.
+// Chips are <span>, not <a>: per RESEARCH.md Pitfall 7, this avoids 35 tabbable elements
+// and drops the WCAG 2.5.5 min-height: 44px touch target (chips are non-interactive labels here).
+import { skills } from "../../data/skills";
+---
+<section class="skills-grouped" aria-labelledby="skills-heading">
+  <h2 id="skills-heading" class="skills-section-heading">Skills</h2>
+  {skills.map((cat) => (
+    <div class="skill-category">
+      <h3 class="skill-category-name">{cat.category}</h3>
+      <div class="skill-chips">
+        {cat.items.map((item) => (
+          <span class="tag-chip skill-chip">{item}</span>
+        ))}
+      </div>
+    </div>
+  ))}
+</section>
+
+<style>
+  .skills-grouped {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .skills-section-heading {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .skill-category {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .skill-category-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  /* PATTERNS.md §SkillsGrouped: replicate TagChip visual CSS but drop min-height: 44px
+     since non-interactive chips don't need a 44px touch target (Pitfall 7). */
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    color: var(--color-muted);
+    border: 1px solid transparent;
+  }
+</style>

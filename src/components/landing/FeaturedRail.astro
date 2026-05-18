@@ -1,0 +1,53 @@
+---
+interface Props {
+  heading: string;
+  viewAllHref: string;
+  viewAllLabel: string;
+  headingId?: string;
+}
+const { heading, viewAllHref, viewAllLabel, headingId } = Astro.props;
+---
+<section class="featured-rail" aria-labelledby={headingId}>
+  <div class="rail-header">
+    <h2 id={headingId} class="rail-heading">{heading}</h2>
+    <a href={viewAllHref} class="rail-view-all">{viewAllLabel}</a>
+  </div>
+  <div class="project-grid">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .featured-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .rail-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .rail-heading {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .rail-view-all {
+    font-size: 14px;
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+  .rail-view-all:hover { color: var(--color-ink); }
+  /* Grid CSS copied verbatim from src/pages/projects/index.astro lines ~172–184 */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 767px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 479px) { .project-grid { grid-template-columns: 1fr; } }
+</style>
