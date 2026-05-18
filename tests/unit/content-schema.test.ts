@@ -30,6 +30,7 @@ const projectsSchema = z.object({
   repoUrl: z.string().url().optional(),
   demoUrl: z.string().url().optional(),
   featured: z.boolean().default(false),
+  featuredOrder: z.number().int().positive().optional(),
 });
 
 // ─── Case Studies schema (mirrors src/content.config.ts) ───────────────────
@@ -41,6 +42,11 @@ const caseStudiesSchema = z.object({
   tags: z.array(z.string()).default([]),
   role: z.string().optional(),
   timeline: z.string().optional(),
+  subtitle: z.string().min(1).max(80),
+  outcome: z.string().min(1).max(200),
+  tech: z.array(z.string()).default([]),
+  featured: z.boolean().default(false),
+  featuredOrder: z.number().int().positive().optional(),
 });
 
 // ─── Blog schema tests ──────────────────────────────────────────────────────
@@ -156,6 +162,16 @@ describe("projects schema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it("projects accepts featuredOrder as positive int", () => {
+    const result = projectsSchema.safeParse({
+      title: "My Project",
+      summary: "A valid summary.",
+      pubDate: "2026-05-15",
+      featuredOrder: 3,
+    });
+    expect(result.success).toBe(true);
+  });
 });
 
 // ─── Case Studies schema tests ──────────────────────────────────────────────
@@ -202,7 +218,23 @@ describe("caseStudies schema", () => {
       draft: false,
       tags: ["systems"],
       role: "Lead Engineer",
+      subtitle: "A subtitle for the case study",
+      outcome: "Improved performance by 40%",
     });
     expect(result.success).toBe(true);
+  });
+
+  it("caseStudies featured defaults to false when missing", () => {
+    const result = caseStudiesSchema.safeParse({
+      title: "My Case Study",
+      description: "A valid description.",
+      pubDate: "2026-05-15",
+      subtitle: "A subtitle",
+      outcome: "A measurable outcome.",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.featured).toBe(false);
+    }
   });
 });
