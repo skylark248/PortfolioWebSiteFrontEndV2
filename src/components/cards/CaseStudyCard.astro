@@ -1,0 +1,132 @@
+---
+// src/components/cards/CaseStudyCard.astro
+// Reusable case-study card extracted from src/pages/case-studies/index.astro.
+// Used by the case-studies listing and the landing page (Plan 03-06).
+
+import { Image } from "astro:assets";
+import TagChip from "../ui/TagChip.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  cs: CollectionEntry<"caseStudies">;
+  loading?: "lazy" | "eager";
+}
+const { cs, loading = "lazy" } = Astro.props;
+---
+
+<article class="cs-feature-card">
+  {cs.data.heroImage && (
+    <a href={`/case-studies/${cs.id}/`}>
+      <Image
+        src={cs.data.heroImage}
+        alt={cs.data.title}
+        loading={loading}
+        widths={[800, 1200]}
+        sizes="min(64rem, 100vw - 2rem)"
+        class="cs-hero"
+      />
+    </a>
+  )}
+  <div class="cs-card-body">
+    <a href={`/case-studies/${cs.id}/`} class="cs-card-title-link">
+      <h2 class="cs-card-title">{cs.data.title}</h2>
+    </a>
+    <p class="cs-card-subtitle">{cs.data.subtitle}</p>
+    <!-- Meta strip: role · timeline, then tech chips -->
+    <div class="cs-meta">
+      {(cs.data.role || cs.data.timeline) && (
+        <span class="cs-meta-text">
+          {[cs.data.role, cs.data.timeline].filter(Boolean).join(" · ")}
+        </span>
+      )}
+      {cs.data.tech.length > 0 && (
+        <div class="cs-tech-chips">
+          {cs.data.tech.map((t) => (
+            <TagChip tag={t} collection="caseStudies" />
+          ))}
+        </div>
+      )}
+    </div>
+    <p class="cs-description">{cs.data.description}</p>
+    <p class="cs-outcome">
+      <span class="outcome-prefix">Result: </span>{cs.data.outcome}
+    </p>
+  </div>
+</article>
+
+<style>
+  .cs-feature-card {
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+    border-radius: 6px;
+    overflow: hidden;
+    transition:
+      box-shadow var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+
+  .cs-feature-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-feature-card { transition: none; }
+    .cs-feature-card:hover { transform: none; box-shadow: none; }
+  }
+
+  .cs-hero {
+    width: 100%;
+    aspect-ratio: 2.5 / 1;
+    object-fit: cover;
+    display: block;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .cs-card-body { padding: 24px; }
+
+  .cs-card-title-link { text-decoration: none; }
+
+  .cs-card-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0 0 8px;
+  }
+
+  .cs-card-title-link:hover .cs-card-title { text-decoration: underline; }
+
+  .cs-card-subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-muted);
+    margin: 0 0 12px;
+  }
+
+  .cs-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .cs-meta-text { font-size: 14px; color: var(--color-muted); }
+  .cs-tech-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .cs-description {
+    font-size: 16px;
+    color: var(--color-ink);
+    margin: 0 0 8px;
+    line-height: 1.6;
+  }
+
+  .cs-outcome {
+    font-size: 14px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .outcome-prefix { font-weight: 700; }
+</style>
