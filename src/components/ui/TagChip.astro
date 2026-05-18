@@ -39,17 +39,21 @@ const href = `/${collectionPath}/tags/${encodeURIComponent(tag)}`;
     border: 1px solid transparent;
     transition:
       color var(--motion-duration-fast) var(--motion-ease-out),
-      border-color var(--motion-duration-fast) var(--motion-ease-out);
+      border-color var(--motion-duration-fast) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out);
   }
 
   .tag-chip:hover {
     color: var(--color-accent);
     border-color: var(--color-accent);
+    transform: translateY(-1px); /* D-15: CSS-only hover lift */
   }
 
+  /* D-15: suppress hover lift under reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .tag-chip {
       transition: none;
     }
+    .tag-chip:hover { transform: none; }
   }
 </style>

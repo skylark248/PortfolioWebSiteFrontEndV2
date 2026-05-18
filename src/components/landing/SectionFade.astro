@@ -1,0 +1,62 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+<div class:list={["section-fade", className]}>
+  <slot />
+</div>
+
+<style>
+  /* Default (no-JS and reduced-motion): section fully visible. */
+  .section-fade {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Only set up the hidden initial state when motion is allowed AND JS has flipped data-state. */
+  @media (prefers-reduced-motion: no-preference) {
+    .section-fade[data-state="pre"] {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .section-fade[data-state="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity var(--motion-duration-slow) var(--motion-ease-out),
+        transform var(--motion-duration-slow) var(--motion-ease-out);
+    }
+  }
+</style>
+
+<script>
+  // Re-attaches on initial load AND after View Transitions (pattern from ThemeToggle.astro line 28).
+  document.addEventListener("astro:page-load", () => {
+    const prefersNoMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersNoMotion) return;
+
+    const sections = document.querySelectorAll<HTMLElement>(".section-fade");
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).dataset.state = "visible";
+            obs.unobserve(entry.target); // one-shot
+          }
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    for (const el of sections) {
+      el.dataset.state = "pre"; // hidden state set only AFTER JS confirms motion OK
+      observer.observe(el);
+    }
+  });
+</script>
