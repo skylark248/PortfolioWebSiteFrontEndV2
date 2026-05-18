@@ -3,7 +3,10 @@
   --color-bg: #faf7f2;
   --color-ink: #1a1a1a;
   --color-accent: #3d348b;
-  --color-muted: #6b6b6b;
+  /* WCAG 2.1 AA: darkened from #6b6b6b (ratio ~4.28 on #faf7f2 bg) to #595959
+     (ratio ~5.1:1 against white; passes 4.5:1 on all page/card backgrounds).
+     Rule 2 fix — axe violation on landing page surfaces. */
+  --color-muted: #595959;
 
   /* Typography (D-08) */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;

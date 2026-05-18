@@ -35,7 +35,9 @@ const href = `/${collectionPath}/tags/${encodeURIComponent(tag)}`;
     line-height: 1.4;
     text-decoration: none;
     background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
-    color: var(--color-muted);
+    /* WCAG 2.1 AA: use --color-ink to ensure ≥ 4.5:1 contrast on any background.
+       --color-muted (#6b6b6b) failed on card-surface backgrounds (axe, Rule 2 fix). */
+    color: var(--color-ink);
     border: 1px solid transparent;
     transition:
       color var(--motion-duration-fast) var(--motion-ease-out),

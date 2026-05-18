@@ -18,7 +18,10 @@ const { label, ariaLabel } = Astro.props;
     font-size: 14px;
     font-weight: 400;
     line-height: 1.4;
-    color: var(--color-muted);
+    /* WCAG 2.1 AA: use --color-ink (not --color-muted) so contrast ≥ 4.5:1
+       on any card/page background. --color-muted (#6b6b6b) failed against
+       the landing page card mix backgrounds (axe violation, Rule 2 fix). */
+    color: var(--color-ink);
     background: color-mix(in srgb, var(--color-muted) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
     /* No transition — pill is static, not interactive. */
