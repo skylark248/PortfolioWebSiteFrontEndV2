@@ -1,0 +1,42 @@
+---
+// D-18: inline About teaser — 2–3 sentences + "Read more on /about →" link.
+// Bio copy is Claude's Discretion (CONTEXT.md §"Claude's Discretion").
+---
+<section class="about-teaser" aria-labelledby="about-heading">
+  <h2 id="about-heading" class="about-heading">About</h2>
+  <p class="about-bio">
+    I'm a Senior Software Engineer at Morgan Stanley, based in the United States, building
+    backend systems in Java and Spring Boot and exploring the edges of TypeScript and Astro on
+    the side. I care about software that's honest about its trade-offs and accessible by default.
+  </p>
+  <a href="/about" class="about-link">Read more on /about →</a>
+</section>
+
+<style>
+  .about-teaser {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 56rem;
+  }
+  .about-heading {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .about-bio {
+    font-size: 16px;
+    color: var(--color-ink);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .about-link {
+    font-size: 14px;
+    color: var(--color-muted);
+    text-decoration: none;
+    align-self: flex-start;
+  }
+  .about-link:hover { color: var(--color-ink); }
+</style>
