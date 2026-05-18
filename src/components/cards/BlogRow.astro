@@ -1,0 +1,98 @@
+---
+// src/components/cards/BlogRow.astro
+// Reusable blog row extracted from src/pages/blog/index.astro.
+// Used by the blog listing and the landing page (Plan 03-06).
+//
+// CRITICAL: Do NOT call render() inside this component.
+// The calling page must compute minutesRead via render(post) and pass it as a prop.
+// See RESEARCH.md Pitfall 6 — render() must stay in the calling page.
+
+import TagChip from "../ui/TagChip.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  minutesRead?: string;
+}
+const { post, minutesRead } = Astro.props;
+const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+const metaText = [formattedDate, minutesRead].filter(Boolean).join(" · ");
+---
+
+<li class="post-row">
+  <a href={`/blog/${post.id}/`} class="post-title-link">
+    {post.data.title}
+  </a>
+  <div class="post-meta">
+    <span class="post-meta-text">{metaText}</span>
+    <div class="post-tags">
+      {post.data.tags.map((tag) => (
+        <TagChip tag={tag} collection="blog" />
+      ))}
+    </div>
+  </div>
+  <p class="post-excerpt">{post.data.description}</p>
+</li>
+
+<style>
+  .post-row {
+    padding: 24px 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
+    border-radius: 4px;
+    transition: background-color var(--motion-duration-fast) var(--motion-ease-out);
+  }
+
+  .post-row:hover {
+    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-row {
+      transition: none;
+    }
+  }
+
+  .post-title-link {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-ink);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .post-title-link:hover {
+    text-decoration: underline;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .post-meta-text {
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .post-excerpt {
+    font-size: 16px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>
