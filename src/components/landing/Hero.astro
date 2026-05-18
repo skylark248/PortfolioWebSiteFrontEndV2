@@ -88,12 +88,32 @@ import avatarSvg from "../../assets/avatar.svg";
     max-width: 64rem;
     margin: 0 auto;
     padding: 64px 1rem 48px;
+    position: relative;
+    --cursor-x: 50%;
+    --cursor-y: 30%;
+  }
+
+  /* D-16: cursor-track ambient glow as a background pseudo-element.
+     pointer-events:none keeps clicks unblocked; z-index:0 sits behind content. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      500px circle at var(--cursor-x) var(--cursor-y),
+      color-mix(in srgb, var(--color-accent) 15%, transparent),
+      transparent 65%
+    );
+    pointer-events: none;
+    z-index: 0;
   }
 
   .hero-grid {
     display: flex;
     align-items: center;
     gap: 24px;
+    position: relative;
+    z-index: 1;
   }
 
   @media (max-width: 767px) {
@@ -132,26 +152,13 @@ import avatarSvg from "../../assets/avatar.svg";
     gap: 16px;
   }
 
-  /* ── Name (D-16: cursor-track accent via CSS var, NOT text color)
-     LAND-05: NO animation, NO transition on .hero-name itself.
-     Color stays var(--color-ink) — RESEARCH.md Pitfall 3 (never transparent).
-     The radial gradient is a decorative tint applied via background-clip:text
-     so the rendered text color remains --color-ink at all times. ──────────── */
+  /* ── Name (LAND-05: NO animation, NO transition, always fully visible) ── */
   .hero-name {
     font-size: clamp(28px, 5vw, 40px);
     font-weight: 700;
     line-height: 1.2;
     margin: 0;
     color: var(--color-ink);
-    background-image: radial-gradient(
-      240px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
-      color-mix(in srgb, var(--color-accent) 18%, transparent),
-      transparent 70%
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    --cursor-x: 50%;
-    --cursor-y: 50%;
     /* NO animation, NO transition — LAND-05: static from first paint. */
   }
 
@@ -274,8 +281,8 @@ import avatarSvg from "../../assets/avatar.svg";
         pendingY = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
         if (rafId) return;
         rafId = requestAnimationFrame(function () {
-          name.style.setProperty("--cursor-x", pendingX);
-          name.style.setProperty("--cursor-y", pendingY);
+          hero.style.setProperty("--cursor-x", pendingX);
+          hero.style.setProperty("--cursor-y", pendingY);
           rafId = null;
         });
       }
