@@ -1,10 +1,168 @@
 ---
+import { render } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPublishedCollection } from "../lib/content";
+
+import Hero from "../components/landing/Hero.astro";
+import SectionFade from "../components/landing/SectionFade.astro";
+import FeaturedRail from "../components/landing/FeaturedRail.astro";
+import SkillsGrouped from "../components/landing/SkillsGrouped.astro";
+import AboutTeaser from "../components/landing/AboutTeaser.astro";
+import CaseStudyCard from "../components/cards/CaseStudyCard.astro";
+import ProjectCard from "../components/cards/ProjectCard.astro";
+import BlogRow from "../components/cards/BlogRow.astro";
+
+// ─── Curation (D-05, D-06, D-09) — mirrors tests/unit/landing-curation.test.ts ─────
+const allCaseStudies = await getPublishedCollection("caseStudies");
+const featuredCaseStudies = allCaseStudies
+  .filter((cs) => cs.data.featured)
+  .sort((a, b) => (a.data.featuredOrder ?? 999) - (b.data.featuredOrder ?? 999))
+  .slice(0, 4);
+const displayCaseStudies = featuredCaseStudies.length > 0
+  ? featuredCaseStudies
+  : [...allCaseStudies]
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 2);
+
+const allProjects = await getPublishedCollection("projects");
+const featuredProjects = allProjects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => (a.data.featuredOrder ?? 999) - (b.data.featuredOrder ?? 999))
+  .slice(0, 4);
+const displayProjects = featuredProjects.length > 0
+  ? featuredProjects
+  : [...allProjects]
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 3);
+
+// ─── Blog (D-08): latest 3 non-draft posts with rendered minutesRead ────────────────
+// Pattern verbatim from src/pages/blog/index.astro lines 13–21 (RESEARCH.md Pitfall 6).
+const latestPosts = (await getPublishedCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+const postsWithMeta = await Promise.all(
+  latestPosts.map(async (post) => {
+    const { remarkPluginFrontmatter } = await render(post);
+    return { post, minutesRead: (remarkPluginFrontmatter?.minutesRead as string | undefined) ?? "" };
+  })
+);
+
+// ─── JSON-LD Person (RESEARCH.md §8 + Security Domain T-03-01) ──────────────────────
+// Serialized via the safe stringify path — never template literals (XSS-safe, T-03-01).
+const personLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Shivansh Choudhary",
+  jobTitle: "Senior Software Engineer",
+  worksFor: { "@type": "Organization", name: "Morgan Stanley" },
+  url: "https://shivanshchoudhary.info/",
+});
 ---
 
 <BaseLayout
-  title="Portfolio"
-  description="Portfolio of Shivansh Choudhary — engineering, systems, craft."
+  title="Shivansh Choudhary — Senior Software Engineer"
+  description="Portfolio of Shivansh Choudhary — engineering, systems, and craft. Backend systems, careful frontends, and the seams in between."
+  jsonLd={personLd}
 >
-  <h1>Portfolio</h1>
+  {/* Hero is NOT wrapped in SectionFade — LAND-01 / LAND-05: static from first paint. */}
+  <Hero />
+
+  <div class="landing-stack">
+    {displayCaseStudies.length > 0 && (
+      <SectionFade>
+        <FeaturedRail
+          heading="Selected case studies"
+          viewAllHref="/case-studies/"
+          viewAllLabel="View all →"
+          headingId="rail-case-studies"
+        >
+          {displayCaseStudies.map((cs) => (
+            <CaseStudyCard cs={cs} />
+          ))}
+        </FeaturedRail>
+      </SectionFade>
+    )}
+
+    {displayProjects.length > 0 && (
+      <SectionFade>
+        <FeaturedRail
+          heading="Selected projects"
+          viewAllHref="/projects/"
+          viewAllLabel="View all →"
+          headingId="rail-projects"
+        >
+          {displayProjects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </FeaturedRail>
+      </SectionFade>
+    )}
+
+    {postsWithMeta.length > 0 && (
+      <SectionFade>
+        <section class="latest-posts" aria-labelledby="rail-posts">
+          <div class="rail-header">
+            <h2 id="rail-posts" class="rail-heading">Latest posts</h2>
+            <a href="/blog/" class="rail-view-all">View all →</a>
+          </div>
+          <ul class="posts-list">
+            {postsWithMeta.map(({ post, minutesRead }) => (
+              <BlogRow post={post} minutesRead={minutesRead} />
+            ))}
+          </ul>
+        </section>
+      </SectionFade>
+    )}
+
+    <SectionFade>
+      <SkillsGrouped />
+    </SectionFade>
+
+    <SectionFade>
+      <AboutTeaser />
+    </SectionFade>
+  </div>
 </BaseLayout>
+
+<style>
+  .landing-stack {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1rem 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .latest-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .rail-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .rail-heading {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .rail-view-all {
+    font-size: 14px;
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+  .rail-view-all:hover { color: var(--color-ink); }
+  .posts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+</style>
