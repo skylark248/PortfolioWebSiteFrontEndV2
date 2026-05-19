@@ -1,0 +1,153 @@
+{
+  "basics": {
+    "name": "Shivansh Choudhary",
+    "label": "Senior Software Engineer",
+    "email": "shivansh.choudhary1997@gmail.com",
+    "phone": "+917436069744",
+    "url": "https://shivanshchoudhary.info/",
+    "summary": "Senior Software Engineer with 4+ years of experience building enterprise-scale distributed systems in Java, Spring Boot, and React. Consistent track record of 40–70% performance improvements across APIs, databases, and data pipelines. Passionate about clean architecture, measurable impact, and turning complex business problems into elegant technical solutions.",
+    "location": {
+      "city": "Jaipur",
+      "countryCode": "IN",
+      "region": "Rajasthan"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "skylark248",
+        "url": "https://github.com/skylark248"
+      },
+      {
+        "network": "LinkedIn",
+        "username": "shivanshc248",
+        "url": "https://www.linkedin.com/in/shivanshc248"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "NAV Fund Administration Group",
+      "position": "Senior Software Engineer",
+      "startDate": "2024-07",
+      "summary": "Lead delivery of an Investment Tracker used across thousands of portfolios, integrating a DMS, external partner APIs, and the accounting platform.",
+      "highlights": [
+        "Led Investment Tracker Platform delivery across 5,000+ funds, integrating DMS, external partner APIs, and accounting platform",
+        "Built Spring Boot schedulers and React dashboards cutting document processing delays by 40%",
+        "Deployed 10M+ row Cassandra reporting database, reducing report latency from minutes to seconds",
+        "Introduced Kafka ingestion pipeline with staging and reconciliation, replacing manual imports (~70% effort saved)",
+        "Integrated AI tooling (Cursor + CodeAnt AI) to accelerate code reviews and delivery (~25% gain)"
+      ],
+      "location": "Jaipur, Rajasthan, India"
+    },
+    {
+      "name": "NAV Fund Administration Group",
+      "position": "Software Engineer",
+      "startDate": "2021-10",
+      "endDate": "2024-06",
+      "summary": "Focused on scale and performance for user-facing services, reworking REST endpoints, delivering distributed caching, and shipping a Client Payments Settlement module.",
+      "highlights": [
+        "Reworked REST endpoints with distributed caching and indexing, cutting median API latency by 60% for 2,500+ daily users",
+        "Implemented partitioning on a 5TB+ SQL Server database, trimming query time ~40% and simplifying operations at scale",
+        "Shipped Client Payments Settlement module with real-time aging and automated invoicing (~50% manual effort reduction)",
+        "Built tag-based self-service reporting framework (Spring Boot + SQL) unifying 20+ tables (-35% IT tickets; hours → minutes)",
+        "Delivered Redis cluster migration achieving 66% throughput improvement and faster failover",
+        "Rolled out Kerberos for encrypted, compliant service-to-DB access across microservices"
+      ],
+      "location": "Jaipur, Rajasthan, India"
+    },
+    {
+      "name": "NAV Fund Administration Group",
+      "position": "Trainee Software Engineer",
+      "startDate": "2021-04",
+      "endDate": "2021-09",
+      "summary": "Delivered an end-to-end tax-filing solution and contributed to a monolith-to-microservices migration, gaining hands-on experience with scalable architectures and TDD.",
+      "highlights": [
+        "Shipped full-stack tax-filing feature (React + Spring Boot + SQL) reducing cycle time by 50%",
+        "Assisted monolith-to-microservices migration (Spring Boot + .NET); built React UIs",
+        "Contributed to custom grouping engine across Java/.NET processing 50,000+ records/min with 99.99% accuracy",
+        "Participated in Agile ceremonies that improved sprint consistency and team throughput"
+      ],
+      "location": "Jaipur, Rajasthan, India"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages",
+      "keywords": ["Java", "TypeScript", "Python", "SQL", "Bash"]
+    },
+    {
+      "name": "Frameworks",
+      "keywords": ["Spring Boot", "Astro", "React", "Node.js"]
+    },
+    {
+      "name": "Infra",
+      "keywords": ["Docker", "Kubernetes", "Terraform", "GitHub Actions"]
+    },
+    {
+      "name": "Cloud",
+      "keywords": ["AWS", "Azure", "Netlify", "Render"]
+    },
+    {
+      "name": "Data",
+      "keywords": ["PostgreSQL", "Redis", "Elasticsearch", "Apache Kafka"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Investment Tracker Platform",
+      "description": "Enterprise Investment Tracker integrating DMS, external partner APIs, and accounting platform for 5,000+ funds with Spring Boot schedulers and React dashboards.",
+      "highlights": [
+        "40% reduction in document processing delays",
+        "10M+ records managed in Cassandra reporting layer",
+        "70% manual effort saved via Kafka ingestion pipeline"
+      ],
+      "keywords": ["Java", "Spring Boot", "React", "Apache Kafka", "Cassandra", "SQL Server", "Docker"]
+    },
+    {
+      "name": "Cassandra Reporting Database",
+      "description": "Cassandra-based reporting layer designed to offload SQL Server analytics workloads, supporting 10M+ records with optimised compaction strategies for write-heavy analytics.",
+      "highlights": [
+        "Report latency dropped from minutes to seconds",
+        "Primary SQL Server load significantly reduced",
+        "10M+ row dataset with optimised compaction"
+      ],
+      "keywords": ["Cassandra", "Java", "Spring Boot", "Docker", "Database Optimisation"]
+    },
+    {
+      "name": "Portfolio Website v2",
+      "description": "Personal portfolio rebuilt with Astro, MDX, and Tailwind CSS — a recruiter-first showcase with blog, case studies, and an HTML+PDF resume system.",
+      "highlights": [
+        "Lighthouse ≥ 90 across Home and Resume pages",
+        "WCAG 2.1 AA accessible with full dark/light theme support",
+        "Single-source resume system: JSON → typed loader → HTML + downloadable PDF"
+      ],
+      "keywords": ["Astro", "MDX", "TypeScript", "Tailwind CSS", "Netlify"],
+      "startDate": "2026-01",
+      "url": "https://shivanshchoudhary.info/"
+    },
+    {
+      "name": "Client Payments Settlement Module",
+      "description": "Full-stack payments settlement system with real-time aging, automated invoicing, and client notifications, reducing manual accounting effort by 50%.",
+      "highlights": [
+        "50% reduction in manual accounting effort",
+        "Real-time aging and automated invoicing/notifications",
+        "Integrated with existing microservices payment infrastructure"
+      ],
+      "keywords": ["Java", "Spring Boot", "React", "SQL Server", "Microservices"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Indian Institute of Technology, Gandhinagar",
+      "area": "Computer Science and Engineering",
+      "studyType": "Bachelor of Technology",
+      "startDate": "2017",
+      "endDate": "2021"
+    }
+  ],
+  "meta": {
+    "canonical": "https://shivanshchoudhary.info/resume",
+    "version": "v1.0.0",
+    "lastModified": "2026-05-19T00:00:00Z"
+  }
+}
