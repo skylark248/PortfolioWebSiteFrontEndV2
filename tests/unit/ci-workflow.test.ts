@@ -64,6 +64,23 @@ describe("CI workflow shape", () => {
     expect(content).toContain("pnpm build");
   });
 
+  it("quality job runs check-resume-freshness script (RES-04 / D-21)", () => {
+    expect(content).toContain("scripts/check-resume-freshness.mjs");
+  });
+
+  it("quality job uses fetch-depth: 0 for git log timestamps (RES-04 / D-21)", () => {
+    // Slice from `quality:` to the next top-level job (lhci: or e2e:) so we don't
+    // match a fetch-depth in a different job. Matches analog's slicing pattern (lines 79–84).
+    const qualityStart = content.indexOf("quality:");
+    const e2eStart = content.indexOf("\ne2e:", qualityStart);
+    const lhciStart = content.indexOf("\nlhci:", qualityStart);
+    const end = Math.min(
+      ...[e2eStart, lhciStart].filter((i) => i > 0).concat(content.length),
+    );
+    const qualitySection = content.slice(qualityStart, end);
+    expect(qualitySection).toContain("fetch-depth: 0");
+  });
+
   it("e2e job installs playwright chromium", () => {
     expect(content).toContain("pnpm exec playwright install --with-deps chromium");
   });
