@@ -5,8 +5,9 @@ module.exports = {
       url: [
         "http://localhost/",
         "http://localhost/404.html",
+        "http://localhost/resume/",
         // Phase 2+ adds: /blog/, one blog post URL, /projects/, one project URL,
-        //               /case-studies/, one case-study URL, /resume, /contact.
+        //               /case-studies/, one case-study URL, /contact.
       ],
       numberOfRuns: 3,
       settings: {
