@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
 import ThemeToggle from "../components/theme/ThemeToggle.astro";
+import HamburgerMenu from "../components/nav/HamburgerMenu.astro";
 import SEO from "../components/seo/SEO.astro";
 import Analytics from "../components/analytics/Analytics.astro";
 import "../styles/global.css";
@@ -60,12 +61,24 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
     <ClientRouter />
 
     <Analytics />
+    <slot name="head" />
   </head>
   <body>
-    <header>
-      <nav>
-        <a href="/">Home</a>
-        <ThemeToggle />
+    <header transition:persist="site-header">
+      <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-links">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/blog" class="nav-link">Blog</a>
+          <a href="/projects" class="nav-link">Projects</a>
+          <a href="/case-studies" class="nav-link">Case Studies</a>
+          <a href="/about" class="nav-link">About</a>
+          <a href="/contact" class="nav-link">Contact</a>
+          <a href="/resume" class="nav-link">Resume</a>
+        </div>
+        <div class="nav-right">
+          <ThemeToggle />
+          <HamburgerMenu />
+        </div>
       </nav>
     </header>
     <main>
@@ -84,3 +97,62 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
     </script>
   </body>
 </html>
+
+<style is:global>
+  /* Site header and nav styles (D-17, D-18) */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-bg);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-muted) 15%, transparent);
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 60px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Hide desktop links on mobile — hamburger replaces them */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+  }
+
+  .nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: color 120ms ease-out, background 120ms ease-out;
+  }
+
+  .nav-link:hover {
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+  }
+
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>

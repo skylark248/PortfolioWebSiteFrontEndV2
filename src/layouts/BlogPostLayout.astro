@@ -12,6 +12,7 @@ import PrevNextNav from "../components/ui/PrevNextNav.astro";
 import Callout from "../components/mdx/Callout.astro";
 import Figure from "../components/mdx/Figure.astro";
 import Aside from "../components/mdx/Aside.astro";
+import ContactCTAStrip from "../components/cta/ContactCTAStrip.astro";
 
 interface Props {
   entry: CollectionEntry<"blog">;
@@ -91,6 +92,7 @@ const ogImage = imageUrl;
 
     <!-- Prev/next navigation (D-05) -->
     <PrevNextNav prevPost={prevPost} nextPost={nextPost} />
+    <ContactCTAStrip />
   </article>
 </BaseLayout>
 
