@@ -2,6 +2,159 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Page not found" description="The page you are looking for does not exist.">
-  <h1>Not Found</h1>
+<BaseLayout
+  title="404 — Page not found · Shivansh Choudhary"
+  description="That page wandered off. Here are the top sections to head to instead."
+>
+  <div class="notfound-page">
+    <div class="notfound-hero">
+      <span class="notfound-code" aria-hidden="true">404</span>
+      <h1 class="notfound-headline">That page wandered off.</h1>
+      <p class="notfound-sub">No worries — here are the most useful places to head instead.</p>
+    </div>
+
+    <nav class="notfound-nav" aria-label="Recovery navigation">
+      <ul class="notfound-links" role="list">
+        <li>
+          <a href="/" class="notfound-link-card">
+            <span class="link-label">Home</span>
+            <span class="link-desc">Back to the landing page</span>
+          </a>
+        </li>
+        <li>
+          <a href="/blog" class="notfound-link-card">
+            <span class="link-label">Blog</span>
+            <span class="link-desc">Writing on engineering and craft</span>
+          </a>
+        </li>
+        <li>
+          <a href="/projects" class="notfound-link-card">
+            <span class="link-label">Projects</span>
+            <span class="link-desc">Things I've built and shipped</span>
+          </a>
+        </li>
+        <li>
+          <a href="/case-studies" class="notfound-link-card">
+            <span class="link-label">Case Studies</span>
+            <span class="link-desc">Deep dives into bigger problems</span>
+          </a>
+        </li>
+        <li>
+          <a href="/contact" class="notfound-link-card">
+            <span class="link-label">Contact</span>
+            <span class="link-desc">Get in touch directly</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </BaseLayout>
+
+<style>
+  .notfound-page {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 64px 16px;
+  }
+
+  @media (max-width: 640px) {
+    .notfound-page { padding: 48px 16px; }
+  }
+
+  /* Hero block */
+  .notfound-hero {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .notfound-code {
+    display: block;
+    font-size: 80px;
+    font-weight: 700;
+    line-height: 1;
+    color: color-mix(in srgb, var(--color-accent) 30%, var(--color-bg));
+    margin-bottom: 16px;
+    letter-spacing: -2px;
+    user-select: none;
+  }
+
+  @media (max-width: 640px) {
+    .notfound-code { font-size: 56px; }
+  }
+
+  .notfound-headline {
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0 0 16px;
+  }
+
+  @media (max-width: 640px) {
+    .notfound-headline { font-size: 28px; }
+  }
+
+  .notfound-sub {
+    font-size: 16px;
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 32rem;
+    margin: 0 auto;
+  }
+
+  /* Nav link cards */
+  .notfound-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Last item (Contact) spans full width when grid has 5 items (2+2+1) */
+  .notfound-links li:last-child {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 480px) {
+    .notfound-links { grid-template-columns: 1fr; }
+    .notfound-links li:last-child { grid-column: auto; }
+  }
+
+  .notfound-link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-muted) 8%, var(--color-bg));
+    border: 1px solid color-mix(in srgb, var(--color-muted) 15%, transparent);
+    text-decoration: none;
+    transition: border-color 120ms ease-out, background 120ms ease-out;
+  }
+
+  .notfound-link-card:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-bg));
+  }
+
+  .notfound-link-card:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  .link-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-ink);
+    line-height: 1.3;
+  }
+
+  .link-desc {
+    font-size: 13px;
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+</style>
