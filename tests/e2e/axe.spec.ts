@@ -13,3 +13,15 @@ for (const path of PAGES_PHASE1) {
     expect(result.violations).toEqual([]);
   });
 }
+
+const PAGES_PHASE5 = ["/contact", "/about", "/thanks"];
+
+for (const path of PAGES_PHASE5) {
+  test(`axe: zero violations on ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const result = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(result.violations).toEqual([]);
+  });
+}

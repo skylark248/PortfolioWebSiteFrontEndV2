@@ -71,4 +71,12 @@ describe("public/_headers security headers", () => {
   it("contains Permissions-Policy", () => {
     expect(headersContent).toContain("Permissions-Policy:");
   });
+
+  it("CSP script-src includes challenges.cloudflare.com for Turnstile widget (D-02)", () => {
+    expect(headersContent).toContain("https://challenges.cloudflare.com");
+  });
+
+  it("CSP contains frame-src directive for Turnstile iframe (D-02)", () => {
+    expect(headersContent).toContain("frame-src https://challenges.cloudflare.com");
+  });
 });
