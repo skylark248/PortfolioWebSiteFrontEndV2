@@ -1,26 +1,196 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import StatusPill from "../components/ui/StatusPill.astro";
+import avatarImg from "../assets/avatar.svg";
+import { resume } from "../data/resume";
+
+const basics = resume.basics!;
+
+const personLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: basics.name,
+  jobTitle: basics.label,
+  url: "https://shivanshchoudhary.info/about",
+  email: basics.email,
+  sameAs: basics.profiles?.map((p) => p.url).filter(Boolean) ?? [],
+});
 ---
+
 <BaseLayout
   title="About — Shivansh Choudhary"
-  description="Learn more about Shivansh Choudhary — Senior Software Engineer at Morgan Stanley."
+  description="Senior Software Engineer based in Jaipur, India — currently at Morgan Stanley. Background, current focus, and what I'm working on."
+  jsonLd={personLd}
 >
-  <div class="placeholder-page">
-    <h1>About me</h1>
-    <p>About page is being set up — check back soon.</p>
-    <a href="/">← Back to home</a>
+  <div class="about-page">
+
+    <!-- Identity block: avatar + name + status pill -->
+    <header class="about-header">
+      <Image
+        src={avatarImg}
+        alt="Shivansh Choudhary"
+        width={180}
+        height={180}
+        class="about-avatar"
+        loading="eager"
+      />
+      <div class="about-identity">
+        <h1 class="about-name">{basics.name}</h1>
+        <StatusPill
+          label="Currently @ Morgan Stanley"
+          ariaLabel="Currently: Senior Software Engineer at Morgan Stanley"
+        />
+        <p class="about-meta">Jaipur, India · IST (UTC+5:30)</p>
+      </div>
+    </header>
+
+    <!-- Now section (D-11 locked) -->
+    <section class="about-section" aria-labelledby="now-heading">
+      <h2 id="now-heading" class="about-section-heading">Now</h2>
+      <p class="about-section-body">
+        I'm a Senior Software Engineer at Morgan Stanley, working on internal platform tooling
+        that handles trade lifecycle management at scale. Day-to-day I'm deep in Java 21,
+        distributed systems design, and the kind of slow-burn refactoring that makes future-you
+        grateful. Not actively job-hunting, but always open to interesting conversations — especially
+        around backend architecture, developer tooling, or anything that ships to prod at unusual
+        scale.
+      </p>
+    </section>
+
+    <!-- Closing dual CTA (D-14 locked) -->
+    <div class="about-cta" role="group" aria-label="Next steps">
+      <a href="/contact" class="cta-primary">Get in touch</a>
+      <a href="/resume" class="cta-secondary">Read my resume</a>
+    </div>
+
   </div>
 </BaseLayout>
 
-<style>
-  .placeholder-page {
+<style is:global>
+  .about-page {
     max-width: 48rem;
     margin: 0 auto;
-    padding: 64px 1rem;
-    text-align: center;
+    padding: 64px 16px;
   }
-  .placeholder-page h1 { font-size: 32px; font-weight: 700; color: var(--color-ink); margin-bottom: 16px; }
-  .placeholder-page p  { font-size: 16px; color: var(--color-muted); margin-bottom: 24px; }
-  .placeholder-page a  { font-size: 14px; color: var(--color-muted); text-decoration: none; }
-  .placeholder-page a:hover { color: var(--color-ink); }
+
+  @media (max-width: 640px) {
+    .about-page { padding: 48px 16px; }
+  }
+
+  /* Identity header */
+  .about-header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  @media (max-width: 640px) {
+    .about-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+  }
+
+  .about-avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .about-avatar { width: 120px; height: 120px; }
+  }
+
+  .about-name {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0 0 12px;
+  }
+
+  @media (max-width: 640px) {
+    .about-name { font-size: 28px; }
+  }
+
+  .about-meta {
+    font-size: 14px;
+    color: var(--color-muted);
+    margin: 8px 0 0;
+  }
+
+  /* Sections */
+  .about-section {
+    margin-bottom: 48px;
+  }
+
+  .about-section-heading {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 12px;
+  }
+
+  .about-section-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-ink);
+    max-width: 44rem;
+  }
+
+  /* Dual CTA — mirrors Phase 3 Hero pattern (D-14 locked) */
+  .about-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .cta-primary {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 120ms var(--motion-ease-out, ease-out);
+  }
+
+  .cta-primary:hover {
+    background: color-mix(in srgb, var(--color-accent), black 8%);
+  }
+
+  .cta-primary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .cta-secondary {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid var(--color-ink);
+    color: var(--color-ink);
+    transition: border-color 120ms ease-out, color 120ms ease-out;
+  }
+
+  .cta-secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .cta-secondary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
 </style>
