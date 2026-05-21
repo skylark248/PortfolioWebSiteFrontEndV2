@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Message received — Shivansh Choudhary"
+  description="Your message has been received."
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex" />
+  </Fragment>
+  <div class="thanks-page">
+    <h1>Thanks — I'll be in touch soon.</h1>
+    <p class="thanks-body">Your message landed safely — expect a reply within a couple of days.</p>
+    <a href="/" class="back-link">← Back to home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .thanks-page {
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: 80px 16px;
+    text-align: center;
+  }
+  .thanks-page h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 16px;
+  }
+  .thanks-body {
+    color: var(--color-muted);
+    margin: 0 0 32px;
+    line-height: 1.6;
+  }
+  .back-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .back-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

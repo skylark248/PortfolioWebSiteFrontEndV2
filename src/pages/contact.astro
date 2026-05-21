@@ -1,26 +1,178 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactInfoCard from "../components/contact/ContactInfoCard.astro";
+import TurnstileWidget from "../components/contact/TurnstileWidget.astro";
+import { resume } from "../data/resume";
+
+const basics = resume.basics!;
+
+const linkedinUrl =
+  basics.profiles.find((p) => p.network === "LinkedIn")?.url ??
+  "https://www.linkedin.com/in/shivanshc248";
+const githubUrl =
+  basics.profiles.find((p) => p.network === "GitHub")?.url ??
+  "https://github.com/skylark248";
 ---
+
 <BaseLayout
   title="Contact — Shivansh Choudhary"
-  description="Get in touch with Shivansh Choudhary — Senior Software Engineer at Morgan Stanley."
+  description="Get in touch — send a message, email me directly, or save my contact card."
 >
-  <div class="placeholder-page">
+  <div class="contact-page">
     <h1>Get in touch</h1>
-    <p>Contact page is being set up — check back soon.</p>
-    <a href="/">← Back to home</a>
+    <div class="contact-grid">
+      <div class="contact-info-col">
+        <ContactInfoCard
+          email={basics.email}
+          linkedinUrl={linkedinUrl}
+          githubUrl={githubUrl}
+          vcfPath="/shivansh.vcf"
+        />
+      </div>
+      <div class="contact-form-col">
+        <form
+          name="contact"
+          method="POST"
+          action="/thanks"
+          data-netlify="true"
+          data-netlify-honeypot="bot-field"
+          class="contact-form"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+
+          <!-- Honeypot: visually hidden, bots fill it, Netlify rejects the submission -->
+          <p hidden aria-hidden="true">
+            <label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
+
+          <div class="form-group">
+            <label for="name" class="form-label">Name <span aria-hidden="true">*</span></label>
+            <input id="name" name="name" type="text" class="form-input" required autocomplete="name" />
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email <span aria-hidden="true">*</span></label>
+            <input id="email" name="email" type="email" class="form-input" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="subject" class="form-label">Subject <span aria-hidden="true">*</span></label>
+            <input id="subject" name="subject" type="text" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label for="message" class="form-label">Message <span aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" class="form-textarea" rows="6" minlength="10" required></textarea>
+          </div>
+
+          <TurnstileWidget />
+
+          <button type="submit" id="contact-submit" class="submit-cta" disabled aria-label="Send message">
+            Send message
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </BaseLayout>
 
-<style>
-  .placeholder-page {
-    max-width: 48rem;
+<style is:global>
+  .contact-page {
+    max-width: 64rem;
     margin: 0 auto;
-    padding: 64px 1rem;
-    text-align: center;
+    padding: 64px 16px;
   }
-  .placeholder-page h1 { font-size: 32px; font-weight: 700; color: var(--color-ink); margin-bottom: 16px; }
-  .placeholder-page p  { font-size: 16px; color: var(--color-muted); margin-bottom: 24px; }
-  .placeholder-page a  { font-size: 14px; color: var(--color-muted); text-decoration: none; }
-  .placeholder-page a:hover { color: var(--color-ink); }
+
+  .contact-page h1 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 40px;
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 640px) {
+    .contact-page h1 { font-size: 28px; }
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  @media (min-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 3fr 2fr;
+      align-items: start;
+    }
+    .contact-info-col { order: 2; }
+    .contact-form-col { order: 1; }
+  }
+
+  /* Mobile: info card above form */
+  .contact-info-col { order: 1; }
+  .contact-form-col { order: 2; }
+
+  /* Form elements */
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin-bottom: 6px;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid color-mix(in srgb, var(--color-muted) 30%, transparent);
+    border-radius: 6px;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 15px;
+    transition: border-color 120ms ease-out;
+    box-sizing: border-box;
+  }
+  .form-input:focus, .form-textarea:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0;
+    border-color: var(--color-accent);
+  }
+  .form-textarea { resize: vertical; min-height: 120px; }
+
+  /* Submit button — same as .download-cta from resume.astro */
+  .submit-cta {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #ffffff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 120ms var(--motion-ease-out, ease-out);
+    margin-top: 8px;
+  }
+  .submit-cta:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-accent), black 8%);
+  }
+  .submit-cta:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .submit-cta:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Turnstile widget spacing */
+  .cf-turnstile { margin: 20px 0 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-input, .form-textarea, .submit-cta { transition: none; }
+  }
 </style>

@@ -1,0 +1,16 @@
+---
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+<div
+  class="cf-turnstile"
+  data-sitekey={siteKey}
+  data-theme="auto"
+  data-callback="onTurnstileSuccess"
+></div>
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script is:inline>
+  function onTurnstileSuccess() {
+    const btn = document.getElementById("contact-submit");
+    if (btn) btn.removeAttribute("disabled");
+  }
+</script>
