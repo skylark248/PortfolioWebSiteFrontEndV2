@@ -10,9 +10,11 @@
   function setup() {
     const btn = document.getElementById("theme-toggle");
     if (!btn) return;
+    // Nested function declarations don't preserve the post-early-return
+    // narrowing of `btn`; assert non-null inside them.
     function syncAriaPressed() {
       const isDark = document.documentElement.dataset.theme === "dark";
-      btn.setAttribute("aria-pressed", String(isDark));
+      btn!.setAttribute("aria-pressed", String(isDark));
     }
     syncAriaPressed();
     btn.addEventListener("click", () => {

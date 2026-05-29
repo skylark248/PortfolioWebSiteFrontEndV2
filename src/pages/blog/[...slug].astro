@@ -1,7 +1,14 @@
 ---
 import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import { getPublishedCollection } from "../../lib/content";
+
+interface Props {
+  entry: CollectionEntry<"blog">;
+  prevPost: CollectionEntry<"blog"> | null;
+  nextPost: CollectionEntry<"blog"> | null;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Sort ascending by pubDate so prev/next are correctly ordered (oldest first)
@@ -19,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { entry, prevPost, nextPost } = Astro.props;
+const { entry, prevPost, nextPost } = Astro.props as Props;
 ---
 
 <BlogPostLayout entry={entry} prevPost={prevPost} nextPost={nextPost} />

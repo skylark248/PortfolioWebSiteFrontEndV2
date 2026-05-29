@@ -1,7 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
 import ProjectLayout from "../../layouts/ProjectLayout.astro";
 import { getPublishedCollection } from "../../lib/content";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const projects = await getPublishedCollection("projects");
@@ -11,7 +16,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { entry } = Astro.props;
+const { entry } = Astro.props as Props;
 ---
 
 <ProjectLayout entry={entry} />

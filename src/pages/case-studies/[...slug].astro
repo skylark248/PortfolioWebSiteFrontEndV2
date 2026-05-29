@@ -4,8 +4,13 @@
 // getPublishedCollection used so draft slugs never generate routes (T-06-02).
 
 import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
 import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
 import { getPublishedCollection } from "../../lib/content";
+
+interface Props {
+  entry: CollectionEntry<"caseStudies">;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const caseStudies = await getPublishedCollection("caseStudies");
@@ -15,7 +20,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { entry } = Astro.props;
+const { entry } = Astro.props as Props;
 ---
 
 <CaseStudyLayout entry={entry} />
