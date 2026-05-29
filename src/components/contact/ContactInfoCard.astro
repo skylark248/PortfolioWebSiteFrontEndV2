@@ -51,11 +51,12 @@ const { email, linkedinUrl, githubUrl, vcfPath } = Astro.props;
 </div>
 
 <style>
+  /* Engineer-classic: flat surface, hairline border, mono labels via icons. */
   .contact-info-card {
-    padding: 24px;
-    border: 1px solid color-mix(in srgb, var(--color-muted) 20%, transparent);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--color-bg) 90%, var(--color-muted) 5%);
+    padding: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-surface);
   }
 
   .info-list {
@@ -64,30 +65,47 @@ const { email, linkedinUrl, githubUrl, vcfPath } = Astro.props;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
   }
 
   .info-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     color: var(--color-ink);
+    padding: 6px 0;
   }
 
   .info-row svg {
     flex-shrink: 0;
-    color: var(--color-muted);
+    color: var(--color-accent);
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
   }
 
   .info-link {
     color: var(--color-ink);
     text-decoration: none;
-    font-size: 14px;
-    transition: color 120ms ease-out;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
     word-break: break-all;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
   }
 
   .info-link:hover {
     color: var(--color-accent);
+    border-bottom-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+
+  .info-row:hover svg {
+    transform: scale(1.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .info-link,
+    .info-row svg { transition: none; }
+    .info-row:hover svg { transform: none; }
   }
 </style>

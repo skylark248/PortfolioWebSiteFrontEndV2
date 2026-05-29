@@ -19,7 +19,15 @@ const githubUrl =
   description="Get in touch — send a message, email me directly, or save my contact card."
 >
   <div class="contact-page">
-    <h1>Get in touch</h1>
+    <header class="contact-header">
+      <p class="contact-eyebrow">Say hi</p>
+      <h1 class="contact-title">Get in touch.</h1>
+      <p class="contact-intro">
+        Best way to reach me is the form on the left — Netlify Forms +
+        Cloudflare Turnstile, so it lands in my inbox without giving spam
+        a foothold. I read everything and reply within a couple of days.
+      </p>
+    </header>
     <div class="contact-grid">
       <div class="contact-info-col">
         <ContactInfoCard
@@ -78,21 +86,40 @@ const githubUrl =
 
 <style is:global>
   .contact-page {
-    max-width: 64rem;
+    max-width: 72rem;
     margin: 0 auto;
-    padding: 64px 16px;
+    padding: clamp(56px, 9vw, 96px) 24px clamp(64px, 9vw, 96px);
   }
 
-  .contact-page h1 {
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 0 0 40px;
+  .contact-header {
+    margin-bottom: clamp(40px, 6vw, 64px);
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .contact-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    margin: 0 0 16px;
+  }
+
+  .contact-title {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
     color: var(--color-ink);
   }
 
-  @media (max-width: 640px) {
-    .contact-page h1 { font-size: 28px; }
+  .contact-intro {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 56ch;
   }
 
   .contact-grid {
@@ -105,6 +132,7 @@ const githubUrl =
     .contact-grid {
       grid-template-columns: 3fr 2fr;
       align-items: start;
+      gap: 56px;
     }
     .contact-info-col { order: 2; }
     .contact-form-col { order: 1; }
@@ -114,55 +142,88 @@ const githubUrl =
   .contact-info-col { order: 1; }
   .contact-form-col { order: 2; }
 
-  /* Form elements */
-  .form-group { margin-bottom: 20px; }
+  /* ── Form elements (engineer-classic) ─────────────────────── */
+  .form-group { margin-bottom: 24px; }
+
   .form-label {
     display: block;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-ink);
-    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 8px;
   }
-  .form-input, .form-textarea {
+
+  .form-input,
+  .form-textarea {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid color-mix(in srgb, var(--color-muted) 30%, transparent);
+    padding: 12px 14px;
+    border: 1px solid var(--color-line);
     border-radius: 6px;
-    background: var(--color-bg);
+    background: var(--color-surface);
     color: var(--color-ink);
     font: inherit;
     font-size: 15px;
-    transition: border-color 120ms ease-out;
+    line-height: 1.5;
+    transition:
+      border-color var(--motion-duration-base) var(--motion-ease-out),
+      background var(--motion-duration-base) var(--motion-ease-out);
     box-sizing: border-box;
   }
-  .form-input:focus, .form-textarea:focus {
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: color-mix(in srgb, var(--color-muted) 70%, transparent);
+  }
+  .form-input:hover,
+  .form-textarea:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-line));
+  }
+  .form-input:focus,
+  .form-textarea:focus {
     outline: 2px solid var(--color-accent);
     outline-offset: 0;
     border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
   }
-  .form-textarea { resize: vertical; min-height: 120px; }
+  .form-textarea { resize: vertical; min-height: 144px; }
 
-  /* Submit button — same as .download-cta from resume.astro */
+  /* ── Submit button (engineer-classic CTA — matches landing hero) ── */
   .submit-cta {
-    display: inline-block;
-    background: var(--color-accent);
-    color: #ffffff;
-    padding: 12px 24px;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 24px;
+    background: transparent;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 6px;
-    font: inherit;
+    font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
+    letter-spacing: 0.015em;
     cursor: pointer;
-    transition: background 120ms var(--motion-ease-out, ease-out);
-    margin-top: 8px;
+    margin-top: 16px;
+    transition:
+      background var(--motion-duration-base) var(--motion-ease-out),
+      color var(--motion-duration-base) var(--motion-ease-out),
+      border-color var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out),
+      box-shadow var(--motion-duration-base) var(--motion-ease-out);
   }
   .submit-cta:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-accent), black 8%);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 0 var(--color-accent);
   }
   .submit-cta:disabled {
-    opacity: 0.55;
+    opacity: 0.45;
     cursor: not-allowed;
+    color: var(--color-muted);
+    border-color: var(--color-line);
   }
   .submit-cta:focus-visible {
     outline: 2px solid var(--color-accent);
@@ -170,9 +231,15 @@ const githubUrl =
   }
 
   /* Turnstile widget spacing */
-  .cf-turnstile { margin: 20px 0 4px; }
+  .cf-turnstile { margin: 28px 0 8px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .form-input, .form-textarea, .submit-cta { transition: none; }
+    .form-input,
+    .form-textarea,
+    .submit-cta { transition: none; }
+    .submit-cta:hover:not(:disabled) {
+      transform: none;
+      box-shadow: none;
+    }
   }
 </style>
