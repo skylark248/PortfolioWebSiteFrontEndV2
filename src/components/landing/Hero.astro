@@ -35,12 +35,15 @@ import StatusPill from "../ui/StatusPill.astro";
       <p class="hero-tagline">I build resilient systems behind the screen.</p>
 
       <p class="hero-pitch">
-        I'm a senior software engineer at Morgan Stanley, working on backend
-        systems in Java and Spring Boot. I care about the seams between
-        services — where latency, correctness, and a quiet on-call rotation
-        all have to agree. I write about the work on
-        <a href="/blog" class="hero-pitch-link">the blog</a>.
+        I'm a senior software engineer at Morgan Stanley. Before that, I built
+        a Cassandra reporting tier that took report generation from
+        <strong class="hero-pitch-num">3&nbsp;minutes</strong> to
+        <strong class="hero-pitch-num">under&nbsp;5&nbsp;seconds</strong>
+        across 10M+ records.
       </p>
+      <a href="/case-studies/cassandra-reporting-database/" class="hero-pitch-cta">
+        Read the case study <span class="hero-pitch-cta-arrow" aria-hidden="true">→</span>
+      </a>
 
       <div class="hero-status-row">
         <StatusPill
@@ -176,14 +179,38 @@ import StatusPill from "../ui/StatusPill.astro";
     max-width: 56ch;
   }
 
-  .hero-pitch-link {
+  /* Highlight numbers inside the pitch paragraph so the scale jumps off the page. */
+  .hero-pitch-num {
+    color: var(--color-accent);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Standalone case-study link beneath the pitch — mono, accent, animated arrow. */
+  .hero-pitch-cta {
+    font-family: var(--font-mono);
+    font-size: 13px;
     color: var(--color-accent);
     text-decoration: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+    letter-spacing: 0.03em;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    padding-bottom: 2px;
+    margin-top: -4px;
     transition: border-color var(--motion-duration-base) var(--motion-ease-out);
   }
-  .hero-pitch-link:hover {
-    border-bottom-color: var(--color-accent);
+  .hero-pitch-cta-arrow {
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .hero-pitch-cta:hover { border-bottom-color: var(--color-accent); }
+  .hero-pitch-cta:hover .hero-pitch-cta-arrow { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-pitch-cta,
+    .hero-pitch-cta-arrow { transition: none; }
+    .hero-pitch-cta:hover .hero-pitch-cta-arrow { transform: none; }
   }
 
   .hero-status-row {

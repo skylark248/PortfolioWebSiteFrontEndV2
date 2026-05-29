@@ -1,10 +1,13 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import { Font } from "astro:assets";
+import { Font, Image } from "astro:assets";
 import ThemeToggle from "../components/theme/ThemeToggle.astro";
 import HamburgerMenu from "../components/nav/HamburgerMenu.astro";
 import SEO from "../components/seo/SEO.astro";
 import Analytics from "../components/analytics/Analytics.astro";
+// Engineer-classic v3.1: tiny avatar as a brand mark, left of nav links.
+// PLACEHOLDER — replace with avatar.jpg once a real photo lands in src/assets/.
+import avatarSvg from "../assets/avatar.svg";
 import "../styles/global.css";
 
 interface Props {
@@ -66,14 +69,27 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
   <body>
     <header transition:persist="site-header">
       <nav class="site-nav" aria-label="Site navigation">
-        <div class="nav-links">
-          <a href="/" class="nav-link">Home</a>
-          <a href="/blog" class="nav-link">Blog</a>
-          <a href="/projects" class="nav-link">Projects</a>
-          <a href="/case-studies" class="nav-link">Case Studies</a>
-          <a href="/about" class="nav-link">About</a>
-          <a href="/contact" class="nav-link">Contact</a>
-          <a href="/resume" class="nav-link">Resume</a>
+        <div class="nav-left">
+          <a href="/" class="nav-brand" aria-label="Shivansh Choudhary — Home">
+            <Image
+              src={avatarSvg}
+              alt=""
+              width={32}
+              height={32}
+              class="nav-avatar"
+              loading="eager"
+              decoding="sync"
+            />
+          </a>
+          <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/blog" class="nav-link">Blog</a>
+            <a href="/projects" class="nav-link">Projects</a>
+            <a href="/case-studies" class="nav-link">Case Studies</a>
+            <a href="/about" class="nav-link">About</a>
+            <a href="/contact" class="nav-link">Contact</a>
+            <a href="/resume" class="nav-link">Resume</a>
+          </div>
         </div>
         <div class="nav-right">
           <ThemeToggle />
@@ -117,15 +133,50 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
     height: 60px;
   }
 
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .nav-brand:hover { transform: scale(1.06); }
+  .nav-brand:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 9999px;
+  }
+
+  .nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    display: block;
+    background: color-mix(in srgb, var(--color-muted) 18%, transparent);
+    border: 1px solid var(--color-line);
+  }
+
   .nav-links {
     display: flex;
     align-items: center;
     gap: 4px;
   }
 
-  /* Hide desktop links on mobile — hamburger replaces them */
+  /* Hide desktop links on mobile — hamburger replaces them. Brand stays. */
   @media (max-width: 768px) {
     .nav-links { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-brand,
+    .nav-brand:hover { transition: none; transform: none; }
   }
 
   .nav-link {
