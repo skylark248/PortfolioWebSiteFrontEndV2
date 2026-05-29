@@ -6,7 +6,7 @@ draft: false
 tags: ["kafka", "java", "distributed-systems", "backend", "data-engineering"]
 ---
 
-Fund data at NAV Fund Administration Group arrived from multiple external providers on irregular schedules — daily files, intraday feeds, and event-driven updates that needed to be reconciled against internal records. The original process relied on manually triggered batch imports: an operator would download files, validate them against expected schemas, import them via a database loader, and flag discrepancies for review. At peak periods this was consuming 30+ hours of analyst time per week.
+Fund data arrived from multiple external providers on irregular schedules and the import process was manual: download, validate, load, flag discrepancies — **30+ hours of analyst time per week** at peak, with errors only caught after they had already landed in downstream reports. I replaced the batch flow with a Kafka-based pipeline that handles the volume hands-off at **99.9% reliability**.
 
 The pipeline replaced that process with a Kafka-based ingestion architecture. Each data provider's feed format was mapped to a normalized ingestion schema and published to a dedicated Kafka topic. Consumer groups downstream processed events through a two-stage pipeline: a staging layer that applied schema validation and enrichment, and a reconciliation layer that compared incoming records against the current internal state and generated exception reports for genuine discrepancies rather than false positives from timing differences.
 

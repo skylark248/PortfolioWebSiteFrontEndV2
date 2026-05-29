@@ -6,7 +6,7 @@ draft: false
 tags: ["java", "microservices", "jvm", "performance", "devops"]
 ---
 
-Five production Spring Boot microservices at NAV Fund Administration Group were running on Java 8 — a runtime approaching end-of-community-support and increasingly misaligned with the Spring Boot 3.x upgrade path we needed for other reasons. The migration to Java 21 LTS was primarily a platform supportability decision, but it produced measurable performance improvements as a side effect.
+Five production Spring Boot microservices on Java 8 — an end-of-community-support runtime that also blocked the path to Spring Boot 3.x we needed for other reasons. I led the migration to Java 21 LTS. The platform-supportability win was the goal; the **~70% drop in average GC pause times** was the side effect that made the case to leadership easy.
 
 The migration sequenced from lowest-risk to highest-risk: notification dispatcher first, Kafka consumer last. Each service went through a three-step process: JDK upgrade and base image swap (eclipse-temurin:8-jre-alpine to eclipse-temurin:21-jre-alpine), full dependency audit for internal API usage and module-system incompatibilities, and coordinated Spring Boot 2-to-3 upgrade (required because Spring Boot 3 mandates Java 17 minimum, making the two changes interdependent).
 
