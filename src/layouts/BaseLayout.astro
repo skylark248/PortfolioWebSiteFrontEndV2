@@ -6,8 +6,8 @@ import HamburgerMenu from "../components/nav/HamburgerMenu.astro";
 import SEO from "../components/seo/SEO.astro";
 import Analytics from "../components/analytics/Analytics.astro";
 // Engineer-classic v3.1: tiny avatar as a brand mark, left of nav links.
-// PLACEHOLDER — replace with avatar.jpg once a real photo lands in src/assets/.
-import avatarSvg from "../assets/avatar.svg";
+// Drop avatar.jpg into src/assets/ to replace the SVG placeholder — see lib/avatar.ts.
+import { avatar } from "../lib/avatar";
 import "../styles/global.css";
 
 interface Props {
@@ -72,7 +72,7 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
         <div class="nav-left">
           <a href="/" class="nav-brand" aria-label="Shivansh Choudhary — Home">
             <Image
-              src={avatarSvg}
+              src={avatar}
               alt=""
               width={32}
               height={32}

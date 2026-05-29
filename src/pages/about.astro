@@ -2,7 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import StatusPill from "../components/ui/StatusPill.astro";
-import avatarImg from "../assets/avatar.svg";
+// Drop avatar.jpg into src/assets/ to replace the SVG placeholder — see lib/avatar.ts.
+import { avatar as avatarImg } from "../lib/avatar";
 import { resume } from "../data/resume";
 
 const basics = resume.basics!;
