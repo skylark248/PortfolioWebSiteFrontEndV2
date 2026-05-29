@@ -424,9 +424,21 @@ const lastUpdated = resume.meta?.lastModified
       margin: 0.5in 0.6in;
     }
 
-    /* D-15: force light mode regardless of [data-theme] */
-    :root {
+    /* D-15: force light mode regardless of [data-theme]. The token override
+       below is the load-bearing fix — without it, every element that uses
+       var(--color-bg|ink|line|surface|muted) keeps painting in dark theme
+       and the PDF prints navy-on-navy. Overriding the variables here
+       cascades into every consumer (rails, borders, section headings, etc.) */
+    :root,
+    :root[data-theme="dark"],
+    :root[data-theme="light"] {
       color-scheme: light;
+      --color-bg: #ffffff !important;
+      --color-surface: #ffffff !important;
+      --color-ink: #000000 !important;
+      --color-muted: #595959 !important;
+      --color-line: #cccccc !important;
+      --color-accent: #3d348b !important;
     }
     html,
     body {
