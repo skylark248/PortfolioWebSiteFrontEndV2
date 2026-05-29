@@ -1,18 +1,29 @@
 @theme {
-  /* Semantic color tokens (D-06; light defaults; dark override below) */
-  --color-bg: #faf7f2;
-  --color-ink: #1a1a1a;
-  --color-accent: #3d348b;
-  /* WCAG 2.1 AA: darkened from #6b6b6b (ratio ~4.28 on #faf7f2 bg) to #595959
-     (ratio ~5.1:1 against white; passes 4.5:1 on all page/card backgrounds).
-     Rule 2 fix — axe violation on landing page surfaces. */
-  --color-muted: #595959;
+  /* Engineer-classic light palette (toggle target).
+     Dark is the default first paint — see BaseLayout's inline theme script.
+     Light here is intentionally refined off-white so the toggle doesn't feel
+     like a paper-white shock. */
+  --color-bg: #f6f5f1;
+  --color-surface: #ffffff;
+  --color-ink: #14171c;
+  --color-muted: #5a6473;       /* ~5.5:1 on #f6f5f1, passes AA */
+  --color-accent: #0ea5a4;      /* deeper teal — AA on light bg */
+  --color-line: #e5e2da;
 
-  /* Typography (D-08) */
+  /* Typography */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* Motion tokens (D-11) */
+  /* Type scale (engineer-classic). Clamped for fluid responsive scaling. */
+  --text-display: clamp(40px, 6.5vw, 68px);
+  --text-heading: clamp(24px, 3.2vw, 32px);
+  --text-eyebrow: 13px;
+  --text-body: 16px;
+
+  /* Section rhythm — generous breathing room between landing sections. */
+  --space-section: clamp(64px, 10vw, 128px);
+
+  /* Motion */
   --motion-duration-fast: 120ms;
   --motion-duration-base: 200ms;
   --motion-duration-slow: 320ms;
@@ -20,18 +31,20 @@
   --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dark mode tokens via [data-theme="dark"] selector (D-06, D-07) */
+/* Dark mode — the DEFAULT first paint (BaseLayout sets data-theme="dark" by default).
+   Navy-slate background, slate ink, teal accent — the Brittany Chiang signature. */
 :root[data-theme="dark"] {
-  --color-bg: #15151a;
-  --color-ink: #ececec;
-  --color-accent: #8b83ff;
-  --color-muted: #9a9a9a;
+  --color-bg: #0a0e1a;          /* deep navy-slate */
+  --color-surface: #111827;     /* card lift */
+  --color-ink: #e6edf3;         /* primary text */
+  --color-muted: #8b95a8;       /* ~5.8:1 on bg, passes AA */
+  --color-accent: #64ffda;      /* engineer teal */
+  --color-line: #1f2937;        /* hairline rules */
 }
 
-/* Tailwind v4 dark variant bound to data-theme attribute (RESEARCH Open Question 3) */
+/* Tailwind v4 dark variant — bound to data-theme attribute (unchanged from prior). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Base body color binding */
 html,
 body {
   background: var(--color-bg);

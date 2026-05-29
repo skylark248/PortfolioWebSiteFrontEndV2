@@ -1,42 +1,92 @@
 ---
 // D-18: inline About teaser — 2–3 sentences + "Read more on /about →" link.
 // Bio copy is Claude's Discretion (CONTEXT.md §"Claude's Discretion").
+// Engineer-classic restyle (v3): numbered heading, hairline rule, mono link.
+
+interface Props {
+  /** Optional mono section marker rendered before the heading (e.g. "05."). */
+  number?: string;
+}
+const { number } = Astro.props;
 ---
 <section class="about-teaser" aria-labelledby="about-heading">
-  <h2 id="about-heading" class="about-heading">About</h2>
+  <h2 id="about-heading" class="about-heading">
+    {number && <span class="about-number" aria-hidden="true">{number}</span>}
+    <span class="about-heading-text">About</span>
+  </h2>
   <p class="about-bio">
-    I'm a Senior Software Engineer at Morgan Stanley, based in the United States, building
-    backend systems in Java and Spring Boot and exploring the edges of TypeScript and Astro on
-    the side. I care about software that's honest about its trade-offs and accessible by default.
+    I'm a Senior Software Engineer at Morgan Stanley, based in the United
+    States, building backend systems in Java and Spring Boot and exploring
+    the edges of TypeScript and Astro on the side. I care about software
+    that's honest about its trade-offs and accessible by default.
   </p>
-  <a href="/about" class="about-link">Read more on /about →</a>
+  <a href="/about" class="about-link">
+    Read more on /about <span aria-hidden="true">→</span>
+  </a>
 </section>
 
 <style>
   .about-teaser {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    max-width: 56rem;
+    gap: 24px;
+    max-width: 64rem;
   }
   .about-heading {
-    font-size: 32px;
+    font-size: clamp(22px, 3vw, 30px);
     font-weight: 700;
     line-height: 1.2;
     color: var(--color-ink);
     margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 16px;
   }
+  .about-number {
+    font-family: var(--font-mono);
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.04em;
+    position: relative;
+    top: -0.05em;
+  }
+  .about-heading-text { display: inline-block; }
   .about-bio {
-    font-size: 16px;
+    font-size: 17px;
     color: var(--color-ink);
-    line-height: 1.6;
+    line-height: 1.7;
     margin: 0;
+    max-width: 64ch;
   }
   .about-link {
-    font-size: 14px;
-    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-accent);
     text-decoration: none;
+    letter-spacing: 0.03em;
     align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    padding-bottom: 2px;
+    transition:
+      border-color var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out);
   }
-  .about-link:hover { color: var(--color-ink); }
+  .about-link span {
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .about-link:hover { border-bottom-color: var(--color-accent); }
+  .about-link:hover span { transform: translateX(2px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-link,
+    .about-link span { transition: none; }
+    .about-link:hover span { transform: none; }
+  }
 </style>

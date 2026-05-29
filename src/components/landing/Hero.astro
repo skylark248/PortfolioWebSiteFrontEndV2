@@ -1,107 +1,114 @@
 ---
 /**
- * Hero.astro — Recruiter-optimized static hero atom (LAND-01, D-01..D-04, D-12, D-16).
+ * Hero.astro — Engineer-classic dense hero (Lee Robinson-style).
  *
- * Atom order (UI-SPEC §Hero composition typography):
- *   1. Avatar        — <Image> with loading="eager" decoding="sync" (LCP, CLS=0)
- *   2. Name          — <h1>, NO animation, NO opacity-from-zero, NO transition (LAND-05)
- *   3. Tagline       — one short sentence, recruiter-scannable in 1–2 seconds
- *   4. Role line     — seniority · location · timezone, muted color
- *   5. Status pill   — "Currently @ Morgan Stanley" (D-03, locked copy)
- *   6. Skill tags    — 3–5 curated heroSkills (D-12)
- *   7. Dual CTAs     — "Get in touch" (primary) + "Read my resume" (secondary) (D-04, locked copy)
+ * Structure:
+ *   Left  (8 cols on >=900px): eyebrow → display name → display tagline
+ *                              → pitch paragraph → status pill → dual CTAs
+ *   Right (4 cols, hairline border-left): mono meta column
+ *                              (Role / Company / Based / Hours / Writing / Code)
  *
- * Cursor-track accent (D-16):
- *   - CSS vars --cursor-x / --cursor-y on .hero-name (radial gradient tint, NOT text color)
- *   - Gated: pointer:fine AND prefers-reduced-motion:no-preference
- *   - Cleaned up on astro:before-swap (no stale listener accumulation across View Transitions)
+ * Invariants preserved from prior contract (do NOT break):
+ *   - <h1 class="hero-name"> with NO animation, NO opacity/transform transition (LAND-05)
+ *   - <p class="hero-tagline"> with NO animation, NO opacity/transform transition (LAND-05)
+ *   - "Get in touch" link present and visible (LAND-01)
+ *   - "Read my resume" link present and visible (LAND-01)
+ *   - "Currently @ Morgan Stanley" text rendered via StatusPill (LAND-01)
  *
- * PLACEHOLDER NOTE: avatar is a temporary SVG (grey circle, "SC" initials).
- *   To replace: place src/assets/avatar.jpg and change the import below to:
- *   import avatarImg from "../../assets/avatar.jpg";
+ * Cursor-track accent (D-16) — preserved; retuned to teal-on-navy via tokens.
  */
 
-import { Image } from "astro:assets";
-import TagChip from "../ui/TagChip.astro";
 import StatusPill from "../ui/StatusPill.astro";
-import { heroSkills } from "../../data/skills";
-// PLACEHOLDER — replace with avatar.jpg once the real photo is placed at src/assets/avatar.jpg
-import avatarSvg from "../../assets/avatar.svg";
 ---
 
 <section class="hero" aria-labelledby="hero-name">
   <div class="hero-grid">
 
-    {/* 1. Avatar */}
-    <div class="hero-avatar-wrap">
-      <Image
-        src={avatarSvg}
-        alt="Shivansh Choudhary"
-        width={128}
-        height={128}
-        loading="eager"
-        decoding="sync"
-        class="hero-avatar"
-      />
-    </div>
+    {/* ── Left column: identity + pitch ───────────────────────── */}
+    <div class="hero-main">
+      <p class="hero-eyebrow">Hi, my name is</p>
 
-    {/* 2–7. Text atoms */}
-    <div class="hero-text">
+      {/* LAND-05: name is static from first paint. */}
+      <h1 id="hero-name" class="hero-name">Shivansh Choudhary.</h1>
 
-      {/* 2. Name — NO animation, NO transition (LAND-05) */}
-      <h1 id="hero-name" class="hero-name">Shivansh Choudhary</h1>
+      {/* LAND-05: tagline is static from first paint. */}
+      <p class="hero-tagline">I build resilient systems behind the screen.</p>
 
-      {/* 3. Tagline — recruiter-scannable sentence */}
-      <p class="hero-tagline">
-        Senior software engineer. Backend systems, careful frontends, and the seams in between.
+      <p class="hero-pitch">
+        I'm a senior software engineer at Morgan Stanley, working on backend
+        systems in Java and Spring Boot. I care about the seams between
+        services — where latency, correctness, and a quiet on-call rotation
+        all have to agree. I write about the work on
+        <a href="/blog" class="hero-pitch-link">the blog</a>.
       </p>
 
-      {/* 4. Role line */}
-      <p class="hero-role">Senior Software Engineer &middot; United States &middot; Working in US time zones</p>
-
-      {/* 5. Status pill (D-03 locked copy) */}
-      <StatusPill
-        label="Currently @ Morgan Stanley"
-        ariaLabel="Currently: Senior Software Engineer at Morgan Stanley"
-      />
-
-      {/* 6. Skill tags (D-12) */}
-      <div class="hero-tags">
-        {heroSkills.map((skill) => (
-          <TagChip tag={skill} collection="projects" />
-        ))}
+      <div class="hero-status-row">
+        <StatusPill
+          label="Currently @ Morgan Stanley"
+          ariaLabel="Currently: Senior Software Engineer at Morgan Stanley"
+        />
       </div>
 
-      {/* 7. Dual CTAs (D-04 locked copy) */}
       <div class="hero-ctas">
-        <a href="/contact" class="cta-primary">Get in touch</a>
+        <a href="/contact" class="cta-primary">
+          Get in touch <span class="cta-arrow" aria-hidden="true">→</span>
+        </a>
         <a href="/resume" class="cta-secondary">Read my resume</a>
       </div>
-
     </div>
+
+    {/* ── Right column: at-a-glance meta (mono, hairline ruled) ── */}
+    <aside class="hero-meta" aria-label="At a glance">
+      <dl>
+        <div class="meta-row">
+          <dt>Role</dt>
+          <dd>Senior Software Engineer</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Company</dt>
+          <dd>Morgan Stanley</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Based</dt>
+          <dd>United States</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Hours</dt>
+          <dd>US time zones</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Writing</dt>
+          <dd><a href="/blog">/blog</a></dd>
+        </div>
+        <div class="meta-row">
+          <dt>Code</dt>
+          <dd><a href="https://github.com/skylark248" rel="me noopener noreferrer" target="_blank">github / skylark248</a></dd>
+        </div>
+      </dl>
+    </aside>
+
   </div>
 </section>
 
 <style>
-  /* ── Layout ─────────────────────────────────────────────────── */
+  /* ── Container ─────────────────────────────────────────────── */
   .hero {
-    max-width: 64rem;
+    max-width: 72rem;
     margin: 0 auto;
-    padding: 64px 1rem 48px;
+    padding: clamp(56px, 9vw, 120px) 24px clamp(48px, 8vw, 96px);
     position: relative;
-    --cursor-x: 50%;
+    --cursor-x: 30%;
     --cursor-y: 30%;
   }
 
-  /* D-16: cursor-track ambient glow as a background pseudo-element.
-     pointer-events:none keeps clicks unblocked; z-index:0 sits behind content. */
+  /* D-16: cursor-track ambient glow — z-index:0 keeps it behind content. */
   .hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background: radial-gradient(
-      500px circle at var(--cursor-x) var(--cursor-y),
-      color-mix(in srgb, var(--color-accent) 15%, transparent),
+      640px circle at var(--cursor-x) var(--cursor-y),
+      color-mix(in srgb, var(--color-accent) 9%, transparent),
       transparent 65%
     );
     pointer-events: none;
@@ -109,90 +116,86 @@ import avatarSvg from "../../assets/avatar.svg";
   }
 
   .hero-grid {
-    display: flex;
-    align-items: center;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
     position: relative;
     z-index: 1;
   }
 
-  @media (max-width: 767px) {
+  @media (min-width: 900px) {
     .hero-grid {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+      gap: 64px;
+      align-items: start;
     }
   }
 
-  /* ── Avatar (D-01, CLS=0) ───────────────────────────────────── */
-  .hero-avatar-wrap {
-    flex-shrink: 0;
-  }
-
-  .hero-avatar {
-    border-radius: 9999px;
-    width: 128px;
-    height: 128px;
-    object-fit: cover;
-    background: color-mix(in srgb, var(--color-muted) 20%, transparent);
-    display: block;
-  }
-
-  @media (max-width: 767px) {
-    .hero-avatar {
-      width: 96px;
-      height: 96px;
-    }
-  }
-
-  /* ── Text column ─────────────────────────────────────────────── */
-  .hero-text {
+  /* ── Left column ──────────────────────────────────────────── */
+  .hero-main {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
+    min-width: 0;
   }
 
-  /* ── Name (LAND-05: NO animation, NO transition, always fully visible) ── */
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    margin: 0;
+  }
+
+  /* LAND-05: hero-name MUST have no opacity/transform transition. */
   .hero-name {
-    font-size: clamp(28px, 5vw, 40px);
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: var(--text-display);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.022em;
     margin: 0;
     color: var(--color-ink);
-    /* NO animation, NO transition — LAND-05: static from first paint. */
   }
 
-  /* ── Tagline (LAND-05: no animation, no transition) ─────────── */
+  /* LAND-05: hero-tagline MUST have no opacity/transform transition. */
   .hero-tagline {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--color-ink);
-    margin: 0;
-    max-width: 48ch;
-    /* NO animation, NO transition — LAND-05. */
-  }
-
-  /* ── Role line (muted, UI-SPEC §Typography) ─────────────────── */
-  .hero-role {
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: clamp(24px, 3.6vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
     color: var(--color-muted);
     margin: 0;
+    max-width: 22ch;
   }
 
-  /* ── Skill tags (D-12) ──────────────────────────────────────── */
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  .hero-pitch {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--color-ink);
+    margin: 4px 0 0;
+    max-width: 56ch;
   }
 
-  /* ── CTAs (D-04) ─────────────────────────────────────────────── */
+  .hero-pitch-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+    transition: border-color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .hero-pitch-link:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .hero-status-row {
+    margin-top: 4px;
+  }
+
   .hero-ctas {
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
     align-items: center;
+    margin-top: 12px;
   }
 
   @media (max-width: 479px) {
@@ -207,58 +210,125 @@ import avatarSvg from "../../assets/avatar.svg";
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
-    padding: 0 20px;
-    border-radius: 8px;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.4;
+    letter-spacing: 0.015em;
     text-decoration: none;
     transition:
-      background var(--motion-duration-base, 200ms) var(--motion-ease-out, ease-out),
-      color var(--motion-duration-base, 200ms) var(--motion-ease-out, ease-out),
-      border-color var(--motion-duration-base, 200ms) var(--motion-ease-out, ease-out);
+      background var(--motion-duration-base) var(--motion-ease-out),
+      color var(--motion-duration-base) var(--motion-ease-out),
+      border-color var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out),
+      box-shadow var(--motion-duration-base) var(--motion-ease-out);
   }
 
-  /* Primary: filled, accent color */
   .cta-primary {
-    background: var(--color-accent);
-    color: var(--color-bg);
+    background: transparent;
+    color: var(--color-accent);
     border: 1px solid var(--color-accent);
   }
-
   .cta-primary:hover {
-    background: color-mix(in srgb, var(--color-accent) 88%, black);
-    border-color: color-mix(in srgb, var(--color-accent) 88%, black);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 0 var(--color-accent);
+  }
+  .cta-primary .cta-arrow {
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(2px);
   }
 
-  /* Secondary: outlined */
   .cta-secondary {
     background: transparent;
     color: var(--color-ink);
-    border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent);
+    border: 1px solid var(--color-line);
   }
-
   .cta-secondary:hover {
-    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
-  /* D-15 / WCAG: suppress hover transitions under reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .cta-primary,
-    .cta-secondary {
+    .cta-secondary,
+    .cta-primary .cta-arrow {
       transition: none;
     }
+    .cta-primary:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .cta-primary:hover .cta-arrow {
+      transform: none;
+    }
+  }
+
+  /* ── Right column: meta ──────────────────────────────────── */
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 900px) {
+    .hero-meta {
+      border-left: 1px solid var(--color-line);
+      padding-left: 32px;
+      align-self: stretch;
+    }
+  }
+
+  .hero-meta dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .meta-row {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .meta-row dt {
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 11px;
+    color: color-mix(in srgb, var(--color-muted) 85%, transparent);
+  }
+  .meta-row dd {
+    margin: 0;
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .meta-row dd a {
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line);
+    transition:
+      color var(--motion-duration-base) var(--motion-ease-out),
+      border-color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .meta-row dd a:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 </style>
 
 {/*
-  D-16: Cursor-track accent gradient — CSS variable update only.
-  - is:inline required: Astro's bundler must NOT deduplicate this across pages.
-    Without is:inline the script never re-runs after a View Transition back to /.
-  - Attaches on astro:page-load (fires on first load + every VT navigation).
-  - Cleans up on astro:before-swap (removes stale listener before DOM swap).
-  - Gated: BOTH pointer:fine AND prefers-reduced-motion:no-preference must be true.
+  D-16: Cursor-track accent — CSS variable updates only.
+  - is:inline keeps Astro from deduping across pages (without it, the listener
+    fails to re-attach after a View Transition back to /).
+  - Re-attaches on astro:page-load (first load + every VT nav).
+  - Cleans up on astro:before-swap (no stale listeners across navs).
+  - Gated: pointer:fine AND prefers-reduced-motion:no-preference.
 */}
 <script is:inline>
   (function () {
@@ -268,8 +338,7 @@ import avatarSvg from "../../assets/avatar.svg";
       if (prefersNoMotion || !isFinePointer) return;
 
       const hero = document.querySelector(".hero");
-      const name = document.getElementById("hero-name");
-      if (!hero || !name) return;
+      if (!hero) return;
 
       let rafId = null;
       let pendingX = null;

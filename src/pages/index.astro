@@ -71,6 +71,7 @@ const personLd = JSON.stringify({
     {displayCaseStudies.length > 0 && (
       <SectionFade>
         <FeaturedRail
+          number="01."
           heading="Selected case studies"
           viewAllHref="/case-studies/"
           viewAllLabel="View all →"
@@ -86,6 +87,7 @@ const personLd = JSON.stringify({
     {displayProjects.length > 0 && (
       <SectionFade>
         <FeaturedRail
+          number="02."
           heading="Selected projects"
           viewAllHref="/projects/"
           viewAllLabel="View all →"
@@ -102,7 +104,10 @@ const personLd = JSON.stringify({
       <SectionFade>
         <section class="latest-posts" aria-labelledby="rail-posts">
           <div class="rail-header">
-            <h2 id="rail-posts" class="rail-heading">Latest posts</h2>
+            <h2 id="rail-posts" class="rail-heading">
+              <span class="rail-number" aria-hidden="true">03.</span>
+              <span class="rail-heading-text">Latest posts</span>
+            </h2>
             <a href="/blog/" class="rail-view-all">View all →</a>
           </div>
           <ul class="posts-list">
@@ -115,54 +120,74 @@ const personLd = JSON.stringify({
     )}
 
     <SectionFade>
-      <SkillsGrouped />
+      <SkillsGrouped number="04." />
     </SectionFade>
 
     <SectionFade>
-      <AboutTeaser />
+      <AboutTeaser number="05." />
     </SectionFade>
   </div>
 </BaseLayout>
 
 <style>
   .landing-stack {
-    max-width: 64rem;
+    max-width: 72rem;
     margin: 0 auto;
-    padding: 0 1rem 64px;
+    padding: 0 24px clamp(64px, 9vw, 128px);
     display: flex;
     flex-direction: column;
-    gap: 48px;
+    gap: var(--space-section);
   }
   .latest-posts {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
   }
   .rail-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 16px;
   }
   .rail-heading {
-    font-size: 32px;
+    font-size: clamp(22px, 3vw, 30px);
     font-weight: 700;
     line-height: 1.2;
     color: var(--color-ink);
     margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    letter-spacing: -0.01em;
   }
+  .rail-number {
+    font-family: var(--font-mono);
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.04em;
+    position: relative;
+    top: -0.05em;
+  }
+  .rail-heading-text { display: inline-block; }
   .rail-view-all {
-    font-size: 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--color-muted);
     text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
+    flex-shrink: 0;
   }
-  .rail-view-all:hover { color: var(--color-ink); }
+  .rail-view-all:hover { color: var(--color-accent); }
   .posts-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
   }
 </style>

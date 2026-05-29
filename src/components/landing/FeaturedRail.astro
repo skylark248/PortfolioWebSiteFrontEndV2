@@ -4,12 +4,17 @@ interface Props {
   viewAllHref: string;
   viewAllLabel: string;
   headingId?: string;
+  /** Optional mono section marker rendered before the heading (e.g. "01."). */
+  number?: string;
 }
-const { heading, viewAllHref, viewAllLabel, headingId } = Astro.props;
+const { heading, viewAllHref, viewAllLabel, headingId, number } = Astro.props;
 ---
 <section class="featured-rail" aria-labelledby={headingId}>
   <div class="rail-header">
-    <h2 id={headingId} class="rail-heading">{heading}</h2>
+    <h2 id={headingId} class="rail-heading">
+      {number && <span class="rail-number" aria-hidden="true">{number}</span>}
+      <span class="rail-heading-text">{heading}</span>
+    </h2>
     <a href={viewAllHref} class="rail-view-all">{viewAllLabel}</a>
   </div>
   <div class="project-grid">
@@ -21,28 +26,48 @@ const { heading, viewAllHref, viewAllLabel, headingId } = Astro.props;
   .featured-rail {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
   }
   .rail-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 16px;
   }
   .rail-heading {
-    font-size: 32px;
+    font-size: clamp(22px, 3vw, 30px);
     font-weight: 700;
     line-height: 1.2;
     color: var(--color-ink);
     margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    letter-spacing: -0.01em;
   }
+  .rail-number {
+    font-family: var(--font-mono);
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.04em;
+    position: relative;
+    top: -0.05em;
+  }
+  .rail-heading-text { display: inline-block; }
   .rail-view-all {
-    font-size: 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--color-muted);
     text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
+    flex-shrink: 0;
   }
-  .rail-view-all:hover { color: var(--color-ink); }
-  /* Grid CSS copied verbatim from src/pages/projects/index.astro lines ~172–184 */
+  .rail-view-all:hover { color: var(--color-accent); }
+  /* Grid CSS preserved from prior contract */
   .project-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

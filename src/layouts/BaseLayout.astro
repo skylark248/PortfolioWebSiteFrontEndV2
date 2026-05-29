@@ -46,11 +46,11 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
       (function () {
         try {
           const stored = localStorage.getItem("theme");
-          const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const theme = stored ?? (systemDark ? "dark" : "light");
-          document.documentElement.dataset.theme = theme;
+          /* Engineer-classic: dark by default. System preference is ignored
+             intentionally — the brand is dark-first; users can toggle. */
+          document.documentElement.dataset.theme = stored ?? "dark";
         } catch (e) {
-          document.documentElement.dataset.theme = "light";
+          document.documentElement.dataset.theme = "dark";
         }
       })();
     </script>
@@ -90,8 +90,7 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", siteUrl).toString();
       document.addEventListener("astro:after-swap", () => {
         try {
           const stored = localStorage.getItem("theme");
-          const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          document.documentElement.dataset.theme = stored ?? (systemDark ? "dark" : "light");
+          document.documentElement.dataset.theme = stored ?? "dark";
         } catch (e) {}
       });
     </script>
