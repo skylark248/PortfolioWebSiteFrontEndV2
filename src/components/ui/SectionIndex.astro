@@ -14,8 +14,9 @@ const { headings } = Astro.props;
 <nav class="section-index" aria-label="Contents">
   <p class="section-index-label">Contents</p>
   <ol class="section-index-list">
-    {headings.map((h) => (
+    {headings.map((h, i) => (
       <li>
+        <span class="section-index-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}.</span>
         <a href={`#${h.slug}`} class="section-index-link">{h.text}</a>
       </li>
     ))}
@@ -23,41 +24,59 @@ const { headings } = Astro.props;
 </nav>
 
 <style>
+  /* Engineer-classic: flat surface, hairline border, mono accent label
+     + numbered entries that mirror the rail headings on landing. */
   .section-index {
-    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
-    border-radius: 4px;
-    padding: 16px;
-    margin-bottom: 32px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
   }
 
   .section-index-label {
-    font-size: 14px;
-    font-weight: 700;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-muted);
-    margin: 0 0 8px;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin: 0 0 14px;
   }
 
   .section-index-list {
     margin: 0;
-    padding-left: 20px;
-    list-style: decimal;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .section-index-list li {
-    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .section-index-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
   }
 
   .section-index-link {
     font-size: 14px;
-    color: var(--color-muted);
+    color: var(--color-ink);
     text-decoration: none;
-    line-height: 1.4;
+    line-height: 1.5;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
   }
 
   .section-index-link:hover {
     color: var(--color-accent);
-    text-decoration: underline;
   }
 </style>
