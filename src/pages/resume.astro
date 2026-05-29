@@ -48,6 +48,7 @@ const lastUpdated = resume.meta?.lastModified
 >
   <article class="resume-page">
     <div class="resume-header">
+      <p class="resume-eyebrow">Curriculum vitae</p>
       <h1>{basics.name}</h1>
       <p class="resume-subhead">
         {basics.label}
@@ -91,13 +92,13 @@ const lastUpdated = resume.meta?.lastModified
           href="/resume.pdf"
           download="Shivansh_Choudhary_Resume_2026.pdf"
           aria-label="Download resume as PDF"
-        >Download PDF</a>
+        >Download PDF <span class="cta-arrow" aria-hidden="true">→</span></a>
         <span class="cta-helper">Or press Cmd / Ctrl + P to print this page.</span>
       </p>
     </div>
 
     <section class="resume-section">
-      <h2>Experience</h2>
+      <h2><span class="section-num" aria-hidden="true">01.</span><span class="section-text">Experience</span></h2>
       {
         resume.work.map((w) => (
           <article class="work-entry">
@@ -128,7 +129,7 @@ const lastUpdated = resume.meta?.lastModified
     </section>
 
     <section class="resume-section">
-      <h2>Skills</h2>
+      <h2><span class="section-num" aria-hidden="true">02.</span><span class="section-text">Skills</span></h2>
       <ul class="skills-list">
         {
           resume.skills.map((s) => (
@@ -141,7 +142,7 @@ const lastUpdated = resume.meta?.lastModified
     </section>
 
     <section class="resume-section">
-      <h2>Projects</h2>
+      <h2><span class="section-num" aria-hidden="true">03.</span><span class="section-text">Projects</span></h2>
       {
         resume.projects.map((p) => (
           <article class="project-entry">
@@ -164,7 +165,7 @@ const lastUpdated = resume.meta?.lastModified
     </section>
 
     <section class="resume-section">
-      <h2>Education</h2>
+      <h2><span class="section-num" aria-hidden="true">04.</span><span class="section-text">Education</span></h2>
       {
         resume.education.map((e) => (
           <article class="education-entry">
@@ -184,44 +185,67 @@ const lastUpdated = resume.meta?.lastModified
 </BaseLayout>
 
 <style is:global>
-  /* ─── Screen styles (resume-page-scoped via .resume-page selector) ────── */
+  /* ─── Screen styles (engineer-classic) ────────────────────────────────── */
   .resume-page {
-    max-width: 48rem;
+    max-width: 56rem;
     margin: 0 auto;
-    padding: 64px 16px;
+    padding: clamp(56px, 9vw, 96px) 24px clamp(64px, 9vw, 96px);
   }
-  @media (min-width: 640px) {
-    .resume-page {
-      padding: 64px 24px;
-    }
+
+  .resume-header {
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--color-line);
+    margin-bottom: clamp(48px, 7vw, 72px);
+  }
+
+  .resume-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    margin: 0 0 16px;
   }
 
   .resume-header h1 {
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 0 0 8px;
-  }
-  @media (max-width: 640px) {
-    .resume-header h1 {
-      font-size: 28px;
-    }
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0 0 12px;
   }
   .resume-subhead {
-    color: var(--color-ink);
-    margin: 0 0 8px;
+    font-size: clamp(17px, 2.2vw, 20px);
+    font-weight: 500;
+    color: var(--color-muted);
+    margin: 0 0 16px;
   }
   .resume-contact {
+    font-family: var(--font-mono);
     color: var(--color-muted);
-    margin: 0 0 8px;
-    font-size: 14px;
+    margin: 0 0 12px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
   }
   .resume-contact a {
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 1px;
+    transition:
+      color var(--motion-duration-base) var(--motion-ease-out),
+      border-color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .resume-contact a:hover {
     color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
   .last-updated {
+    font-family: var(--font-mono);
     color: var(--color-muted);
-    font-size: 14px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
     margin: 0 0 24px;
   }
 
@@ -229,79 +253,167 @@ const lastUpdated = resume.meta?.lastModified
     display: flex;
     align-items: center;
     gap: 16px;
-    margin: 24px 0 48px;
+    margin: 24px 0 0;
     flex-wrap: wrap;
   }
+
+  /* Download CTA — matches landing hero + /about + /contact CTA pattern */
   .download-cta {
-    display: inline-block;
-    background: var(--color-accent);
-    color: #ffffff;
-    padding: 12px 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 24px;
+    background: transparent;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 6px;
+    font-family: var(--font-mono);
     font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.015em;
     text-decoration: none;
-    transition: background 120ms var(--motion-ease-out, ease-out);
+    transition:
+      background var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out),
+      box-shadow var(--motion-duration-base) var(--motion-ease-out);
   }
   .download-cta:hover {
-    background: color-mix(in srgb, var(--color-accent), black 8%);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 0 var(--color-accent);
   }
+  .download-cta .cta-arrow {
+    transition: transform var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .download-cta:hover .cta-arrow { transform: translateX(2px); }
   .cta-helper {
+    font-family: var(--font-mono);
     color: var(--color-muted);
-    font-size: 14px;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .download-cta,
+    .download-cta .cta-arrow,
+    .resume-contact a { transition: none; }
+    .download-cta:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .download-cta:hover .cta-arrow { transform: none; }
   }
 
   .resume-section {
-    margin-top: 32px;
+    margin-top: clamp(40px, 6vw, 56px);
   }
   .resume-section h2 {
-    color: var(--color-accent);
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 16px;
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0 0 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-line);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
   }
+  .resume-section h2 .section-num {
+    font-family: var(--font-mono);
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.04em;
+    position: relative;
+    top: -0.05em;
+  }
+  .resume-section h2 .section-text { display: inline-block; }
+
   .work-entry,
   .project-entry,
   .education-entry {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    padding-left: 16px;
+    border-left: 2px solid var(--color-line);
   }
   .work-entry h3,
   .project-entry h3,
   .education-entry h3 {
-    font-size: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.005em;
+  }
+  .work-company {
+    color: var(--color-accent);
     font-weight: 600;
-    margin: 0 0 4px;
   }
   .work-meta,
   .education-meta {
+    font-family: var(--font-mono);
     color: var(--color-muted);
-    font-size: 14px;
-    margin: 0 0 8px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    margin: 0 0 12px;
   }
   .work-summary {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
+    color: var(--color-ink);
+    line-height: 1.65;
   }
   .work-highlights {
     margin: 0;
     padding-left: 20px;
+    color: var(--color-ink);
   }
   .work-highlights li {
     margin-bottom: 8px;
+    line-height: 1.65;
+  }
+  .work-highlights li::marker {
+    color: var(--color-accent);
   }
   .skills-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
   .skill-group {
-    margin-bottom: 8px;
+    margin: 0;
+    line-height: 1.65;
+  }
+  .skill-group strong {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-right: 8px;
   }
   .project-entry a {
     color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    transition: border-color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .project-entry a:hover {
+    border-bottom-color: var(--color-accent);
   }
   .project-keywords {
+    font-family: var(--font-mono);
     color: var(--color-muted);
-    font-size: 14px;
-    margin: 4px 0 0;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    margin: 8px 0 0;
   }
 
   /* ─── Print rules (D-10/D-15) ────────────────────────────────────────────
@@ -328,8 +440,46 @@ const lastUpdated = resume.meta?.lastModified
     footer,
     .download-cta,
     .cta-row,
-    .last-updated {
+    .last-updated,
+    .resume-eyebrow,
+    .section-num,
+    .cta-arrow {
       display: none !important;
+    }
+
+    /* Strip engineer-classic screen ornaments (mono fonts, letter-spacing,
+       uppercase, accent borders, vertical rails) for ATS-friendly print. */
+    .resume-page,
+    .resume-contact,
+    .resume-contact a,
+    .work-meta,
+    .education-meta,
+    .project-keywords,
+    .skill-group strong,
+    .resume-section h2,
+    .resume-section h2 .section-text {
+      font-family: inherit !important;
+      letter-spacing: normal !important;
+      text-transform: none !important;
+      border: 0 !important;
+      padding-left: 0 !important;
+    }
+    .work-entry,
+    .project-entry,
+    .education-entry {
+      border-left: 0 !important;
+      padding-left: 0 !important;
+    }
+    .resume-section h2 {
+      gap: 0 !important;
+    }
+    .resume-header {
+      border-bottom: 0 !important;
+      padding-bottom: 0 !important;
+      margin-bottom: 24px !important;
+    }
+    .resume-contact a {
+      color: #3d348b !important;
     }
 
     /* D-12: keep accent on name + section headings in print */
