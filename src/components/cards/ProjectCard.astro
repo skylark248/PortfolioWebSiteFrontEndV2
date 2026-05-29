@@ -73,19 +73,22 @@ const { project, loading = "lazy" } = Astro.props;
 </article>
 
 <style>
+  /* Engineer-classic: hairline border, flat, accent on hover. */
   .project-card {
-    background: color-mix(in srgb, var(--color-bg) 70%, var(--color-ink) 10%);
-    border: 1px solid color-mix(in srgb, var(--color-muted) 15%, transparent);
-    border-radius: 0 0 4px 4px;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
     overflow: hidden;
     transition:
-      box-shadow var(--motion-duration-base) var(--motion-ease-out),
-      transform var(--motion-duration-base) var(--motion-ease-out);
+      border-color var(--motion-duration-base) var(--motion-ease-out),
+      transform var(--motion-duration-base) var(--motion-ease-out),
+      box-shadow var(--motion-duration-base) var(--motion-ease-out);
   }
 
   .project-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 12%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -98,28 +101,35 @@ const { project, loading = "lazy" } = Astro.props;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
+    border-bottom: 1px solid var(--color-line);
   }
 
-  .card-body { padding: 16px; }
+  .card-body {
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
   .card-title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.3;
-    margin: 0 0 8px;
+    letter-spacing: -0.005em;
+    margin: 0;
   }
 
   .card-title a {
     color: var(--color-ink);
     text-decoration: none;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
   }
-
-  .card-title a:hover { text-decoration: underline; }
+  .card-title a:hover { color: var(--color-accent); }
 
   .card-summary {
-    font-size: 16px;
+    font-size: 14px;
     color: var(--color-muted);
-    margin: 0 0 12px;
+    margin: 0;
     line-height: 1.6;
   }
 
@@ -129,23 +139,31 @@ const { project, loading = "lazy" } = Astro.props;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    margin-top: 4px;
   }
 
   .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 
   .card-links {
     display: flex;
-    gap: 8px;
+    gap: 12px;
   }
 
   .card-icon-link {
     color: var(--color-muted);
-    transition: color var(--motion-duration-fast) var(--motion-ease-out);
+    display: inline-flex;
+    align-items: center;
+    transition: color var(--motion-duration-fast) var(--motion-ease-out),
+                transform var(--motion-duration-base) var(--motion-ease-out);
   }
 
-  .card-icon-link:hover { color: var(--color-accent); }
+  .card-icon-link:hover {
+    color: var(--color-accent);
+    transform: translateY(-1px);
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .card-icon-link { transition: none; }
+    .card-icon-link:hover { transform: none; }
   }
 </style>
