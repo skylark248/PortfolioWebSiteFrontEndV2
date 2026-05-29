@@ -66,8 +66,11 @@ const jsonLd = JSON.stringify(ldObject);
   jsonLd={jsonLd}
 >
   <article class="case-study-detail">
-    <!-- Header block: title → subtitle → meta strip → hero image (D-06) -->
+    {/* Header: mono eyebrow → display title → subtitle → meta strip → hero image (D-06) */}
     <header class="cs-header">
+      <p class="cs-eyebrow">
+        <a href="/case-studies/" class="cs-eyebrow-link">/case-studies</a>
+      </p>
       <h1 class="cs-title">{entry.data.title}</h1>
       <p class="cs-subtitle">{entry.data.subtitle}</p>
       <MetaStrip
@@ -83,7 +86,7 @@ const jsonLd = JSON.stringify(ldObject);
             alt={entry.data.title}
             loading="eager"
             widths={[800, 1200, 1600]}
-            sizes="min(65ch, 100vw - 2rem)"
+            sizes="min(72ch, 100vw - 2rem)"
             class="hero-image"
           />
         </div>
@@ -106,33 +109,53 @@ const jsonLd = JSON.stringify(ldObject);
 
 <style>
   .case-study-detail {
-    max-width: min(65ch, 100% - 2rem);
+    max-width: min(72ch, 100% - 2rem);
     margin: 0 auto;
-    padding: 64px 1rem;
+    padding: clamp(56px, 9vw, 96px) 1rem clamp(64px, 9vw, 96px);
   }
 
   .cs-header {
-    margin-bottom: 32px;
+    margin-bottom: clamp(32px, 5vw, 48px);
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-line);
   }
 
+  /* Mono eyebrow links back to the collection index. */
+  .cs-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    margin: 0 0 16px;
+  }
+  .cs-eyebrow-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .cs-eyebrow-link:hover { color: var(--color-ink); }
+  .cs-eyebrow-link::before { content: "← "; }
+
   .cs-title {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
     color: var(--color-ink);
-    margin: 0 0 8px;
+    margin: 0 0 16px;
   }
 
   .cs-subtitle {
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 1.3;
+    font-size: clamp(18px, 2.5vw, 22px);
+    font-weight: 500;
+    line-height: 1.4;
     color: var(--color-muted);
-    margin: 0 0 12px;
+    margin: 0 0 24px;
+    max-width: 56ch;
   }
 
   .cs-hero {
-    margin-top: 16px;
+    margin-top: 32px;
   }
 
   .hero-image {
@@ -140,12 +163,13 @@ const jsonLd = JSON.stringify(ldObject);
     aspect-ratio: 21 / 9;
     object-fit: cover;
     border-radius: 6px;
+    border: 1px solid var(--color-line);
   }
 
   .cs-body {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 400;
-    line-height: 1.6;
+    line-height: 1.75;
     color: var(--color-ink);
   }
 
@@ -168,7 +192,65 @@ const jsonLd = JSON.stringify(ldObject);
     .cs-body :global(.heading-anchor) { transition: none; }
   }
 
-  /* Prose heading sizes (UI-SPEC Display / Heading roles) */
-  .cs-body :global(h2) { font-size: 32px; font-weight: 700; line-height: 1.25; margin: 48px 0 16px; }
-  .cs-body :global(h3) { font-size: 20px; font-weight: 700; line-height: 1.3; margin: 32px 0 12px; }
+  /* Prose heading sizes — engineer-classic: sharper, mono-flavored hairline rule. */
+  .cs-body :global(h2) {
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 64px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .cs-body :global(h2:first-child) { margin-top: 0; }
+
+  .cs-body :global(h3) {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--color-ink);
+    margin: 40px 0 12px;
+  }
+
+  /* Inline accents in prose */
+  .cs-body :global(strong) { color: var(--color-ink); font-weight: 700; }
+  .cs-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    transition: border-color var(--motion-duration-base) var(--motion-ease-out);
+  }
+  .cs-body :global(a:hover) { border-bottom-color: var(--color-accent); }
+  .cs-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-surface);
+    color: var(--color-accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--color-line);
+  }
+  .cs-body :global(p) { margin: 0 0 20px; }
+
+  /* Lede paragraph (engineer-classic): hairline accent rail + slightly larger type. */
+  .cs-body :global(.cs-lede) {
+    font-size: clamp(18px, 1.9vw, 20px);
+    line-height: 1.65;
+    color: var(--color-ink);
+    border-left: 3px solid var(--color-accent);
+    padding-left: 20px;
+    margin: 0 0 36px;
+    max-width: 64ch;
+  }
+  .cs-body :global(.cs-lede strong) {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  .cs-body :global(ul),
+  .cs-body :global(ol) {
+    margin: 0 0 24px;
+    padding-left: 24px;
+  }
+  .cs-body :global(li) { margin-bottom: 8px; }
 </style>

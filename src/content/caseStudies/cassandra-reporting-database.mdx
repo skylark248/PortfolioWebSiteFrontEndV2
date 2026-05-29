@@ -11,6 +11,10 @@ role: "Architect and Lead Implementer"
 timeline: "2022 – 2023"
 ---
 
+<p class="cs-lede">
+Six analytics queries drove 80% of the reporting load on a SQL Server already maxed out by transactional writes. I moved those queries to a query-pattern-shaped Cassandra read tier with a Kafka write path — and report generation went from **3+ minutes** to **under 5 seconds** across **10M+ records**. SQL Server's lock contention cleared inside a week.
+</p>
+
 ## Problem
 
 The investment platform's SQL Server database was doing double duty: it was both the transactional system of record for fund and document state, and the data source for a growing set of reporting queries. Over time, as the fund count grew past 3,000 and reporting usage expanded across the operations team, the two workloads started competing.

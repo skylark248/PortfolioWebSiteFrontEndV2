@@ -11,6 +11,10 @@ role: "Lead Software Engineer"
 timeline: "2022 – 2024"
 ---
 
+<p class="cs-lede">
+Three systems managed a fund document's lifecycle and none of them talked to each other; analysts reconciled state by hand every day, and operations only learned about delays after they compounded. I led the backend of the layer that made them talk — Spring Boot schedulers feeding a Kafka pipeline, a Cassandra read tier for the dashboards. Document processing time fell **40%** across **5,000+ funds** and **2,500+ daily users** inside the first quarter, and the manual reconciliation went away.
+</p>
+
 ## Problem
 
 Fund administrators at NAV Fund Administration Group managed document workflows across a fragmented set of systems: a Document Management System for fund filings, external data providers for fund-level metrics, and an internal accounting platform that operated on its own schedule. There was no unified view of where a document was in its lifecycle, which funds had outstanding items, or how processing delays correlated with downstream accounting entries.
