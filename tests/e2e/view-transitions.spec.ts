@@ -20,19 +20,21 @@ test.describe("View Transitions (FOUND-06)", () => {
     expect(content).toContain('localStorage.getItem("theme")');
   });
 
-  test("inline blocking theme script checks prefers-color-scheme dark", async ({ page }) => {
+  test("inline blocking theme script defaults to dark when no stored preference", async ({ page }) => {
+    // Phase A: engineer-classic is dark-first. The inline blocking script no
+    // longer consults prefers-color-scheme — it falls back to "dark" if
+    // localStorage is empty. This test guards that intentional behavior.
     await page.goto("/");
     const content = await page.content();
-    expect(content).toContain("prefers-color-scheme: dark");
+    expect(content).toContain('stored ?? "dark"');
   });
 
-  test("theme toggle button is present with transition:persist (via data-astro-transition-persist)", async ({
-    page,
-  }) => {
+  test("theme toggle button is present (.theme-toggle)", async ({ page }) => {
     await page.goto("/");
-    // Astro compiles transition:persist into a data-astro-transition-persist attribute
-    const toggle = await page.$("#theme-toggle");
-    expect(toggle).not.toBeNull();
+    // Two instances render per page (desktop nav + hamburger drawer);
+    // we just need at least one to be present.
+    const toggles = await page.$$(".theme-toggle");
+    expect(toggles.length).toBeGreaterThanOrEqual(1);
   });
 
   test("navigating to /404 via client-side does not cause full page reload", async ({ page }) => {

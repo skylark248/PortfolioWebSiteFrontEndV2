@@ -22,7 +22,7 @@ test.describe("Theme persistence (MISC-03)", () => {
     });
 
     // Click the theme toggle to switch to dark
-    await page.click("#theme-toggle");
+    await page.click(".theme-toggle");
 
     // Verify dark was set
     const themeBefore = await page.evaluate(() => document.documentElement.dataset.theme);
@@ -47,7 +47,7 @@ test.describe("Theme persistence (MISC-03)", () => {
       document.documentElement.dataset.theme = "light";
     });
 
-    await page.click("#theme-toggle");
+    await page.click(".theme-toggle");
 
     // Verify dark was set and persisted to localStorage
     const storedTheme = await page.evaluate(() => localStorage.getItem("theme"));
