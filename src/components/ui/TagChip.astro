@@ -53,13 +53,28 @@ const href = `/${collectionPath}/tags/${encodeURIComponent(tag)}`;
   .tag-chip:hover {
     color: var(--color-accent);
     border-color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+    background: var(--state-hover, color-mix(in srgb, var(--color-accent) 8%, transparent));
     transform: translateY(-1px); /* D-15: CSS-only hover lift */
   }
 
-  /* D-15: suppress hover lift under reduced motion */
+  /* M3 press feedback — minimal scale-down + state-press surface.
+     100ms (M3 short-2) on the way in, emphasized-accelerate ease for the
+     "snap" feel. Spring returns on release. Not a literal ripple — that
+     would clash with the engineer-classic restraint. */
+  .tag-chip:active {
+    transform: scale(0.94);
+    background: var(--state-press, color-mix(in srgb, var(--color-accent) 12%, transparent));
+    transition:
+      transform var(--dur-short-2, 100ms) var(--ease-exit, cubic-bezier(0.3,0,0.8,0.15)),
+      background var(--dur-short-2, 100ms) var(--ease-standard, ease-out),
+      color var(--motion-duration-fast) var(--motion-ease-out),
+      border-color var(--motion-duration-fast) var(--motion-ease-out);
+  }
+
+  /* D-15: suppress hover lift + press scale under reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .tag-chip { transition: none; }
     .tag-chip:hover { transform: none; }
+    .tag-chip:active { transform: none; }
   }
 </style>

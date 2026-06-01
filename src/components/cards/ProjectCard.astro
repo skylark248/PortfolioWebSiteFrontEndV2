@@ -75,19 +75,21 @@ const { project, loading = "lazy" } = Astro.props;
 </article>
 
 <style>
-  /* Engineer-classic: hairline border, flat, accent on hover. */
+  /* Engineer-classic × M3: L2 at rest, L3 on hover via tonal surface token. */
   .project-card {
-    background: transparent;
+    background: var(--surface-2, transparent);
     border: 1px solid var(--color-line);
     border-radius: 6px;
     overflow: hidden;
     transition:
-      border-color var(--motion-duration-base) var(--motion-ease-out),
-      transform var(--motion-duration-base) var(--motion-ease-out),
-      box-shadow var(--motion-duration-base) var(--motion-ease-out);
+      background var(--dur-med-1, 250ms) var(--ease-standard, ease-out),
+      border-color var(--dur-med-1, 250ms) var(--ease-standard, ease-out),
+      transform var(--dur-med-2, 300ms) var(--ease-spring, ease-out),
+      box-shadow var(--dur-med-2, 300ms) var(--ease-standard, ease-out);
   }
 
   .project-card:hover {
+    background: var(--surface-3, transparent);
     border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line));
     transform: translateY(-3px);
     box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 12%, transparent);
@@ -95,7 +97,11 @@ const { project, loading = "lazy" } = Astro.props;
 
   @media (prefers-reduced-motion: reduce) {
     .project-card { transition: none; }
-    .project-card:hover { transform: none; box-shadow: none; }
+    .project-card:hover {
+      transform: none;
+      box-shadow: none;
+      background: var(--surface-2, transparent);
+    }
   }
 
   .card-hero {

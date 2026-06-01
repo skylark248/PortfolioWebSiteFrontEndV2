@@ -63,6 +63,7 @@ const { number } = Astro.props;
     max-width: 64ch;
   }
   .about-link {
+    position: relative;
     font-family: var(--font-mono);
     font-size: 13px;
     color: var(--color-accent);
@@ -75,18 +76,36 @@ const { number } = Astro.props;
     border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
     padding-bottom: 2px;
     transition:
-      border-color var(--motion-duration-base) var(--motion-ease-out),
-      transform var(--motion-duration-base) var(--motion-ease-out);
+      color var(--dur-med-1, 250ms) var(--ease-standard, ease-out),
+      text-shadow var(--dur-med-1, 250ms) var(--ease-standard, ease-out);
+  }
+  .about-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-med-1, 250ms) var(--ease-standard, ease-out);
   }
   .about-link span {
     transition: transform var(--motion-duration-base) var(--motion-ease-out);
   }
-  .about-link:hover { border-bottom-color: var(--color-accent); }
+  .about-link:hover {
+    text-shadow: 0 0 8px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+  .about-link:hover::after { transform: scaleX(1); }
   .about-link:hover span { transform: translateX(2px); }
 
   @media (prefers-reduced-motion: reduce) {
     .about-link,
+    .about-link::after,
     .about-link span { transition: none; }
+    .about-link:hover::after { transform: none; }
     .about-link:hover span { transform: none; }
+    .about-link:hover { text-shadow: none; }
   }
 </style>

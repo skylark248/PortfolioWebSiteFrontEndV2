@@ -75,4 +75,17 @@ const { heading, viewAllHref, viewAllLabel, headingId, number } = Astro.props;
   }
   @media (max-width: 767px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 479px) { .project-grid { grid-template-columns: 1fr; } }
+
+  /* Sibling-dim on rail hover (Brittany Chiang pattern).
+     When the user hovers any card in this rail, all siblings fade to 50%.
+     Targets both card class names since the rail is collection-agnostic. */
+  @media (prefers-reduced-motion: no-preference) and (pointer: fine) {
+    .project-grid:has(:hover) > :not(:hover) {
+      opacity: 0.5;
+      transition: opacity var(--dur-med-1, 250ms) var(--ease-standard, ease-out);
+    }
+    .project-grid > * {
+      transition: opacity var(--dur-med-2, 300ms) var(--ease-standard, ease-out);
+    }
+  }
 </style>
