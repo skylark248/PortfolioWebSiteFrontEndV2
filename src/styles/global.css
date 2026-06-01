@@ -24,6 +24,41 @@ body::before {
 /* Ensure all real content stacks above the grain layer. */
 body > * { position: relative; z-index: 1; }
 
+/* ─── Expressive Code wrapper — engineer-classic bridge ────────────────────
+   Expressive Code already supplies the github-dark-dimmed theme and the inner
+   syntax tokens via astro-expressive-code. These rules only tune the OUTER
+   wrapper so it visually composes with our card system (6px radius, line
+   border, breathable margin). EC's own CSS variables are scoped to .frame
+   and per-theme. */
+.expressive-code,
+.expressive-code .frame {
+  border-radius: 6px;
+}
+
+/* Outer figure spacing inside prose — matches the rest of the body rhythm. */
+.cs-body .expressive-code,
+.post-body .expressive-code,
+.detail-body .expressive-code,
+.about-page .expressive-code {
+  margin: 24px 0;
+}
+
+/* Soft hairline frame in our line color when the theme's border is missing.
+   --code-background is set by Expressive Code per active theme; we override
+   the surrounding shadow/border so the block reads as an engineer-classic
+   surface, not a stock IDE panel. */
+.expressive-code .frame {
+  border: 1px solid var(--color-line);
+  box-shadow: none;
+}
+
+/* Reduce the empty-title chrome bar height — when no filename is given,
+   EC still renders <figcaption class="header"></figcaption> with default
+   padding. Collapse it so the code starts flush with the wrapper. */
+.expressive-code .frame > figcaption.header:empty {
+  display: none;
+}
+
 /* Global reduced-motion respect (D-11) — pitfall B (no global scroll-behavior:smooth)
    Also disables scroll-driven and view animations under the same media query. */
 @media (prefers-reduced-motion: reduce) {

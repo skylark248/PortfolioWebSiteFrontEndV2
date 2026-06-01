@@ -40,6 +40,27 @@ The dependency audit was where most of the real work lived.
 
 **Removed internal Sun APIs.** One service had a long-standing utility class that called `sun.misc.BASE64Encoder` — a pattern that was never public API but had worked on Java 8 for years. This class was removed in Java 11. Replacing it with `java.util.Base64` took about ten minutes, but it was a reminder that technical debt in the form of internal API usage does eventually come due.
 
+```java
+// Before (Java 8) — relied on a removed Sun internal API.
+import sun.misc.BASE64Encoder;
+String encoded = new BASE64Encoder().encode(payload);
+
+// After (Java 21) — public standard library, no module-system surprises.
+import java.util.Base64;
+String encoded = Base64.getEncoder().encodeToString(payload);
+```
+
+The `pom.xml` change was a single property update plus a base-image swap in the Dockerfile — together they let the rest of the dependency audit proceed against a stable JDK target:
+
+```xml
+<!-- pom.xml — Java 8 → 21 -->
+<properties>
+  <java.version>21</java.version>
+  <maven.compiler.source>21</maven.compiler.source>
+  <maven.compiler.target>21</maven.compiler.target>
+</properties>
+```
+
 **Serialization changes.** The reporting aggregation service used Java serialization (ObjectOutputStream/ObjectInputStream) for a caching layer that pre-dated our Kafka infrastructure. Some serialized class graphs failed to deserialize cleanly after the JDK bump, because stricter serialization filters in Java 17+ rejected some patterns we were relying on implicitly. This was the most disruptive issue — it required a cache-clear deploy window and a refactor to use JSON serialization instead, which we had been meaning to do anyway.
 
 ## What Measurably Improved
