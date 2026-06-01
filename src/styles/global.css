@@ -2,7 +2,30 @@
 @import "tailwindcss";
 @import "./theme.css";
 
-/* Global reduced-motion respect (D-11) — pitfall B (no global scroll-behavior:smooth) */
+/* ─── SVG grain texture (Commit 2) ─────────────────────────────────────────
+   Adds a static fractalNoise overlay on the entire viewport. Cuts the
+   "perfectly flat dark" feel of #0a0e1a — the grain is the substrate that
+   makes M3 tonal elevation legible. Pattern: a single inline SVG feTurbulence
+   filter, baked as a data URI. 0.04 opacity (CSS-Tricks "Grainy Gradients").
+   Fixed-positioned, pointer-events:none, z-index below all content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+  /* Light mode grain reads better at slightly lower opacity. */
+}
+:root:not([data-theme="dark"]) body::before { opacity: 0.025; }
+
+/* Ensure all real content stacks above the grain layer. */
+body > * { position: relative; z-index: 1; }
+
+/* Global reduced-motion respect (D-11) — pitfall B (no global scroll-behavior:smooth)
+   Also disables scroll-driven and view animations under the same media query. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -12,6 +35,9 @@
     animation-iteration-count: 1 !important;
     /* stylelint-disable-next-line declaration-property-value-disallowed-list */
     transition-duration: 0.01ms !important;
+    /* Disable scroll-driven and view timelines so anything bound to them
+       snaps to its final state instead of being driven by scroll. */
+    animation-timeline: auto !important;
     scroll-behavior: auto !important;
   }
 }
