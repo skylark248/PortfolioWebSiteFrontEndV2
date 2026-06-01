@@ -23,23 +23,98 @@
   /* Section rhythm — generous breathing room between landing sections. */
   --space-section: clamp(64px, 10vw, 128px);
 
-  /* Motion */
-  --motion-duration-fast: 120ms;
-  --motion-duration-base: 200ms;
-  --motion-duration-slow: 320ms;
-  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  /* ─── Motion — M3 motion tokens × engineer-classic ─────────────────────────
+     Full Material 3 duration scale; emphasized easing curves; spring approx
+     via linear() for hover lifts. Legacy --motion-duration-* aliases are
+     preserved below for prior CSS that hasn't been migrated yet. */
+
+  /* Duration tokens (M3 spec — 14 named steps). */
+  --dur-short-1: 50ms;
+  --dur-short-2: 100ms;
+  --dur-short-3: 150ms;
+  --dur-short-4: 200ms;
+  --dur-med-1:   250ms;
+  --dur-med-2:   300ms;
+  --dur-med-3:   350ms;
+  --dur-med-4:   400ms;
+  --dur-long-1:  450ms;
+  --dur-long-2:  500ms;
+  --dur-long-3:  550ms;
+  --dur-long-4:  600ms;
+  --dur-xlong-1: 700ms;
+  --dur-xlong-2: 800ms;
+
+  /* Easing tokens — M3 standard + emphasized family.
+     Use enter for elements arriving on screen; exit for those leaving.
+     Standard is the safe default for in-place state changes. */
+  --ease-standard:   cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter:      cubic-bezier(0.05, 0.7, 0.1, 1);     /* emphasized-decelerate */
+  --ease-exit:       cubic-bezier(0.3, 0, 0.8, 0.15);     /* emphasized-accelerate */
+
+  /* Spring approximation (damping ~0.9, stiffness ~700) — for hover lifts.
+     Browser support ~92% mid-2026; degrades gracefully to linear in older UAs. */
+  --ease-spring: linear(
+    0, 0.009, 0.035 4.1%, 0.141, 0.281 13.6%,
+    0.723 25.8%, 0.877, 0.975, 1.041, 1.06 38.1%,
+    1.072, 1.065, 1.035 53.1%, 0.985, 1.004, 1.012 79.9%,
+    1.001, 1
+  );
+
+  /* Legacy duration/easing aliases — kept so prior code keeps working. */
+  --motion-duration-fast: var(--dur-short-3);   /* 150ms */
+  --motion-duration-base: var(--dur-short-4);   /* 200ms */
+  --motion-duration-slow: var(--dur-med-2);     /* 300ms */
+  --motion-ease-out:    var(--ease-enter);
+  --motion-ease-in-out: var(--ease-standard);
 }
 
 /* Dark mode — the DEFAULT first paint (BaseLayout sets data-theme="dark" by default).
    Navy-slate background, slate ink, teal accent — the Brittany Chiang signature. */
 :root[data-theme="dark"] {
   --color-bg: #0a0e1a;          /* deep navy-slate */
-  --color-surface: #111827;     /* card lift */
+  --color-surface: #111827;     /* card lift (legacy alias of --surface-2) */
   --color-ink: #e6edf3;         /* primary text */
   --color-muted: #8b95a8;       /* ~5.8:1 on bg, passes AA */
   --color-accent: #64ffda;      /* engineer teal */
   --color-line: #1f2937;        /* hairline rules */
+}
+
+/* ─── M3 tonal elevation (dark) ─────────────────────────────────────────────
+   Material 3 replaces shadow-based depth with the primary color mixed into the
+   surface at fixed opacities. Mapping for this site:
+     L0 = body bg
+     L1 = sticky nav, sticky toolbars
+     L2 = cards at rest (default surface)
+     L3 = cards hovered, raised state
+     L4 = modal / drawer
+     L5 = tooltip / popover
+   Combine L2+ with the existing --color-line hairline for the engineer-classic
+   "structured" read on top of M3's tonal logic. */
+:root[data-theme="dark"] {
+  --surface-1: color-mix(in srgb, var(--color-accent)  5%, var(--color-bg));
+  --surface-2: color-mix(in srgb, var(--color-accent)  8%, var(--color-bg));
+  --surface-3: color-mix(in srgb, var(--color-accent) 11%, var(--color-bg));
+  --surface-4: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg));
+  --surface-5: color-mix(in srgb, var(--color-accent) 14%, var(--color-bg));
+
+  /* M3 state layers — accent overlay at 8% hover, 12% press/focus, 16% drag. */
+  --state-hover: color-mix(in srgb, var(--color-accent)  8%, transparent);
+  --state-press: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  --state-drag:  color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+
+/* Light-mode elevation mirrors the dark mapping but mixes accent into the
+   off-white base. Borders still come from --color-line. */
+:root:not([data-theme="dark"]) {
+  --surface-1: color-mix(in srgb, var(--color-accent)  4%, var(--color-bg));
+  --surface-2: color-mix(in srgb, var(--color-accent)  6%, var(--color-bg));
+  --surface-3: color-mix(in srgb, var(--color-accent)  8%, var(--color-bg));
+  --surface-4: color-mix(in srgb, var(--color-accent) 10%, var(--color-bg));
+  --surface-5: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg));
+
+  --state-hover: color-mix(in srgb, var(--color-accent)  6%, transparent);
+  --state-press: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  --state-drag:  color-mix(in srgb, var(--color-accent) 14%, transparent);
 }
 
 /* Tailwind v4 dark variant — bound to data-theme attribute (unchanged from prior). */
