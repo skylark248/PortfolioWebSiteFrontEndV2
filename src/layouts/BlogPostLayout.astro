@@ -67,7 +67,9 @@ const ogImage = imageUrl;
       <p class="post-eyebrow">
         <a href="/blog/" class="post-eyebrow-link">/blog</a>
       </p>
-      <h1 class="post-title">{entry.data.title}</h1>
+      {/* view-transition-name binds this h1 to the matching BlogRow title on
+         /blog/ — the card text morphs into the detail h1 on navigation. */}
+      <h1 class="post-title" style={`view-transition-name: blog-${entry.id};`}>{entry.data.title}</h1>
       {entry.data.description && (
         <p class="post-description">{entry.data.description}</p>
       )}

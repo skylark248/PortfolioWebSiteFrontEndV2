@@ -28,7 +28,9 @@ const { project, loading = "lazy" } = Astro.props;
     </a>
   )}
   <div class="card-body">
-    <h2 class="card-title">
+    {/* view-transition-name on the heading itself (not the anchor) so the
+       morph target matches the detail page's h1. */}
+    <h2 class="card-title" style={`view-transition-name: project-${project.id};`}>
       <a href={`/projects/${project.id}/`}>{project.data.title}</a>
     </h2>
     <p class="card-summary">{project.data.summary}</p>

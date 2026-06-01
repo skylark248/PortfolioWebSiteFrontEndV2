@@ -71,7 +71,10 @@ const jsonLd = JSON.stringify(ldObject);
       <p class="cs-eyebrow">
         <a href="/case-studies/" class="cs-eyebrow-link">/case-studies</a>
       </p>
-      <h1 class="cs-title">{entry.data.title}</h1>
+      {/* view-transition-name binds this h1 to the matching CaseStudyCard
+         title on /case-studies/ + landing — the card text morphs into the
+         detail h1 on navigation. */}
+      <h1 class="cs-title" style={`view-transition-name: cs-${entry.id};`}>{entry.data.title}</h1>
       <p class="cs-subtitle">{entry.data.subtitle}</p>
       <MetaStrip
         role={entry.data.role}

@@ -12,21 +12,25 @@ const { class: className } = Astro.props;
   /* Default (no-JS and reduced-motion): section fully visible. */
   .section-fade {
     opacity: 1;
-    transform: none;
+    clip-path: inset(0 0 0 0);
   }
 
-  /* Only set up the hidden initial state when motion is allowed AND JS has flipped data-state. */
+  /* Engineer-classic × M3: replace the prior opacity+translateY fade with a
+     clip-path top-down wipe (Emil Kowalski pattern). Reads as deliberate
+     typesetting rather than generic "scroll animation". opacity is kept for
+     extra polish; the wipe carries the heavy lifting.
+     Easing: --ease-enter (M3 emphasized-decelerate) at long-2 (500ms). */
   @media (prefers-reduced-motion: no-preference) {
     .section-fade[data-state="pre"] {
       opacity: 0;
-      transform: translateY(10px);
+      clip-path: inset(0 0 100% 0);
     }
     .section-fade[data-state="visible"] {
       opacity: 1;
-      transform: translateY(0);
+      clip-path: inset(0 0 0 0);
       transition:
-        opacity var(--motion-duration-slow) var(--motion-ease-out),
-        transform var(--motion-duration-slow) var(--motion-ease-out);
+        opacity var(--dur-long-2, 500ms) var(--ease-enter, ease-out),
+        clip-path var(--dur-long-2, 500ms) var(--ease-enter, ease-out);
     }
   }
 </style>

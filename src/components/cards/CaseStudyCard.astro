@@ -29,7 +29,9 @@ const { cs, loading = "lazy" } = Astro.props;
   )}
   <div class="cs-card-body">
     <a href={`/case-studies/${cs.id}/`} class="cs-card-title-link">
-      <h2 class="cs-card-title">{cs.data.title}</h2>
+      {/* Matches the cs-${id} view-transition-name on the detail page's h1
+         so the card title morphs into the detail title on navigation. */}
+      <h2 class="cs-card-title" style={`view-transition-name: cs-${cs.id};`}>{cs.data.title}</h2>
     </a>
     <p class="cs-card-subtitle">{cs.data.subtitle}</p>
     {(cs.data.role || cs.data.timeline) && (

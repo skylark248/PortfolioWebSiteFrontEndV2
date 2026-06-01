@@ -42,7 +42,9 @@ const ogImage = entry.data.heroImage
       <p class="detail-eyebrow">
         <a href="/projects/" class="detail-eyebrow-link">/projects</a>
       </p>
-      <h1 class="detail-title">{entry.data.title}</h1>
+      {/* view-transition-name binds this h1 to the matching ProjectCard
+         title on /projects/ + landing — card text morphs into detail h1. */}
+      <h1 class="detail-title" style={`view-transition-name: project-${entry.id};`}>{entry.data.title}</h1>
       <p class="detail-summary">{entry.data.summary}</p>
     </div>
 

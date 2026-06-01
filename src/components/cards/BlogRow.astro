@@ -24,7 +24,9 @@ const metaText = [formattedDate, minutesRead].filter(Boolean).join(" · ");
 ---
 
 <li class="post-row">
-  <a href={`/blog/${post.id}/`} class="post-title-link">
+  {/* view-transition-name on the title link so the row text morphs into
+     the detail page's h1 on navigation (paired with BlogPostLayout). */}
+  <a href={`/blog/${post.id}/`} class="post-title-link" style={`view-transition-name: blog-${post.id};`}>
     {post.data.title}
   </a>
   <div class="post-meta">
