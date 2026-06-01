@@ -182,11 +182,37 @@ import StatusPill from "../ui/StatusPill.astro";
     max-width: 56ch;
   }
 
-  /* Highlight numbers inside the pitch paragraph so the scale jumps off the page. */
+  /* Highlight numbers inside the pitch paragraph so the scale jumps off the page.
+     Pulse-glow on first paint draws the eye to the proof point — 800ms one-shot,
+     400ms delay so the user reads the sentence into the numbers first. The two
+     numbers stagger via nth-of-type so they pulse sequentially, not together. */
   .hero-pitch-num {
     color: var(--color-accent);
     font-weight: 700;
     white-space: nowrap;
+    display: inline-block;
+    transform-origin: center;
+    animation: hero-num-pulse var(--dur-xlong-2, 800ms) var(--ease-spring, cubic-bezier(0.05,0.7,0.1,1)) both;
+  }
+  .hero-pitch-num:nth-of-type(1) { animation-delay: 400ms; }
+  .hero-pitch-num:nth-of-type(2) { animation-delay: 700ms; }
+
+  @keyframes hero-num-pulse {
+    0%   { transform: scale(0.92); text-shadow: 0 0 0 transparent; opacity: 0.6; }
+    40%  {
+      transform: scale(1.06);
+      text-shadow: 0 0 14px color-mix(in srgb, var(--color-accent) 55%, transparent);
+      opacity: 1;
+    }
+    100% { transform: scale(1); text-shadow: 0 0 0 transparent; opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-pitch-num {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
   }
 
   /* Standalone case-study link beneath the pitch — mono, accent, animated arrow. */
@@ -255,13 +281,19 @@ import StatusPill from "../ui/StatusPill.astro";
       color var(--motion-duration-base) var(--motion-ease-out),
       border-color var(--motion-duration-base) var(--motion-ease-out),
       transform var(--motion-duration-base) var(--motion-ease-out),
+      translate var(--dur-med-1, 250ms) var(--ease-spring, cubic-bezier(0.05,0.7,0.1,1)),
       box-shadow var(--motion-duration-base) var(--motion-ease-out);
   }
 
+  /* Magnetic primary CTA — pointer attracts the button toward the cursor.
+     Uses the individual `translate` property (composes with transform), so the
+     hover box-shadow nudge stacks on top of the magnetic offset.
+     JS sets --mag-x / --mag-y from a pointermove listener (see script below). */
   .cta-primary {
     background: transparent;
     color: var(--color-accent);
     border: 1px solid var(--color-accent);
+    translate: var(--mag-x, 0) var(--mag-y, 0);
   }
   .cta-primary:hover {
     background: color-mix(in srgb, var(--color-accent) 10%, transparent);
@@ -298,6 +330,8 @@ import StatusPill from "../ui/StatusPill.astro";
     .cta-primary:hover .cta-arrow {
       transform: none;
     }
+    /* Hard-reset the magnetic vars so the button stays still. */
+    .cta-primary { translate: none; }
   }
 
   /* ── Right column: meta ──────────────────────────────────── */
@@ -388,11 +422,76 @@ import StatusPill from "../ui/StatusPill.astro";
 
       hero.addEventListener("pointermove", onPointerMove);
 
+      // ─── Magnetic primary CTA ────────────────────────────────────────────
+      // Tracks pointer on a 40px halo around the button and pulls the button
+      // toward the cursor at a 30% strength factor, capped at ±8px so the
+      // motion stays subtle. Pointer position is read in viewport coords; we
+      // measure from the button's CENTER each frame so the offset is stable
+      // even as the button itself translates.
+      const cta = hero.querySelector(".cta-primary");
+      let ctaInside = false;
+      let magRaf = null;
+      let magX = 0;
+      let magY = 0;
+
+      function clampMag(v) {
+        return Math.max(-8, Math.min(8, v));
+      }
+
+      function onCtaMove(e) {
+        const rect = cta.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const halo = 40;
+        const inX = e.clientX >= rect.left - halo && e.clientX <= rect.right + halo;
+        const inY = e.clientY >= rect.top - halo && e.clientY <= rect.bottom + halo;
+        if (!inX || !inY) {
+          if (ctaInside) {
+            ctaInside = false;
+            magX = 0;
+            magY = 0;
+            cta.style.setProperty("--mag-x", "0px");
+            cta.style.setProperty("--mag-y", "0px");
+          }
+          return;
+        }
+        ctaInside = true;
+        magX = clampMag((e.clientX - cx) * 0.3);
+        magY = clampMag((e.clientY - cy) * 0.3);
+        if (magRaf) return;
+        magRaf = requestAnimationFrame(function () {
+          cta.style.setProperty("--mag-x", magX.toFixed(1) + "px");
+          cta.style.setProperty("--mag-y", magY.toFixed(1) + "px");
+          magRaf = null;
+        });
+      }
+
+      function onCtaReset() {
+        ctaInside = false;
+        cta.style.setProperty("--mag-x", "0px");
+        cta.style.setProperty("--mag-y", "0px");
+      }
+
+      if (cta) {
+        // Listen on document so the halo can extend beyond the button itself.
+        document.addEventListener("pointermove", onCtaMove);
+        // Hard reset when the page goes inactive.
+        document.addEventListener("pointerleave", onCtaReset);
+      }
+
       document.addEventListener("astro:before-swap", function cleanup() {
         hero.removeEventListener("pointermove", onPointerMove);
+        if (cta) {
+          document.removeEventListener("pointermove", onCtaMove);
+          document.removeEventListener("pointerleave", onCtaReset);
+        }
         if (rafId) {
           cancelAnimationFrame(rafId);
           rafId = null;
+        }
+        if (magRaf) {
+          cancelAnimationFrame(magRaf);
+          magRaf = null;
         }
         document.removeEventListener("astro:before-swap", cleanup);
       }, { once: true });
